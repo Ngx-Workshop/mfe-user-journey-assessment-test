@@ -2,9 +2,14 @@ import { Route } from '@angular/router';
 import App from './app';
 
 export const Routes: Route[] = [
-  { path: '', redirectTo: 'hello-world', pathMatch: 'full' },
   {
-    path: 'hello-world',
-    component: App,
+    path: '',
+    children: [
+      { path: '', redirectTo: 'overview', pathMatch: 'full' },
+      {
+        path: 'overview',
+        component: App,
+      },
+    ],
   },
 ];
