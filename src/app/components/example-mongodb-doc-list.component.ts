@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -27,7 +27,6 @@ import { ExampleMongodbDocComponent } from './example-mongodb-doc.component';
   selector: 'ngx-example-mongodb-doc-list',
   standalone: true,
   imports: [
-    CommonModule,
     MatButtonModule,
     MatIconModule,
     MatDialogModule,
@@ -36,8 +35,8 @@ import { ExampleMongodbDocComponent } from './example-mongodb-doc.component';
     MatProgressBarModule,
     MatFormFieldModule,
     MatInputModule,
-    MatTooltipModule,
-  ],
+    MatTooltipModule
+],
   template: `
     <div class="header">
       <h1>Example MongoDB Docs</h1>
