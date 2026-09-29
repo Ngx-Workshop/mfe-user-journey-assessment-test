@@ -12,7 +12,7 @@ module.exports = withModuleFederationPlugin({
     './Routes': './src/app/app.routes.ts',
   },
 
-  hared: {
+  shared: {
     '@angular/core': {
       singleton: true,
       strictVersion: true,
