@@ -1,3 +1,5 @@
+> Historical adoption snapshot. The implemented learner journey is documented in [001 learner journey](../specs/001-learner-journey/handoff.md).
+
 # Seed adoption status — learner assessments
 
 The Markdown workflow is adopted from `seed-mfe-remote`; workflow instructions and

@@ -1,24 +1,14 @@
 # Learner assessment journey
 
-Angular remote intended for learner assessments in Ngx-Workshop. **The current
-implementation is still the example-document CRUD scaffold**, not a test-taking
-experience. It calls `/api/example-crud/`; it is not wired to `service-assessment-test`.
+Angular learner remote for Ngx-Workshop: subject discovery, eligible assessments, saved progress, review and submission, historical results and proficiency. Uses the authenticated `/api/assessment-test` service boundary; assessment authoring remains in the admin journey.
 
-Start with [AGENTS.md](AGENTS.md), [architecture](docs/architecture.md),
-[development](docs/development.md), and [assessment readiness](docs/assessment-readiness.md).
-The adopted [specification workflow](.specify/README.md) and [feature index](specs/README.md)
-keep future requirements, plans, tasks and handoffs in this repository.
+Start with [AGENTS.md](AGENTS.md), [architecture](docs/architecture.md), [development](docs/development.md), and the [learner handoff](specs/001-learner-journey/handoff.md). The local [workflow](.specify/README.md) and [feature index](specs/README.md) track requirements and verification.
 
 ## Local commands
+Use Node 22 and `npm ci`. `npm run dev:bundle` runs the development watcher and static bundle server on 4201. Existing hosted local overrides can consume the bundle; API requests still use the host's origin. Do not start a competing server.
 
-Use Node 22 and `npm ci`. `npm start` serves on port 4201; `npm run dev:bundle`
-runs a development watch build and a CORS-enabled static server on that same port.
-These commands do not supply an API proxy or backend. Check for another remote
-already using 4201 before starting one.
+`npm run build` produces the production federation bundle. `npm test -- --watch=false --browsers=ChromeHeadless` runs eight learner tests.
 
-`npm run build` produces `dist/mfe-user-journey-assessment-test`.
-`npm test -- --watch=false --browsers=ChromeHeadless` uses Karma/Chrome; the inherited
-app tests need correction before they are a reliable baseline.
+For a disposable integrated review, build with `npm run build -- --output-path dist/learner-verification`, then run `npm run preview:learner` in the companion service checkout. Open http://localhost:4203/. This uses synthetic records and a regular learner identity in a unique local database, with the actual frontend/service. See [development](docs/development.md) for details and limitations.
 
-Pushing `main` triggers the existing production deployment. Documentation adoption
-has not changed runtime code, federation identity, deployment settings or API behavior.
+The generated contract package 0.0.19 is vendored until its registry release. Producer service/gateway must be updated before releasing the learner. Federation identity, exposures, public overview route and deployment configuration remain compatible. No deployment or registry publication was performed in this implementation.

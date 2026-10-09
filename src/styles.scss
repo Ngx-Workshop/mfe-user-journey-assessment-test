@@ -1,0 +1,16 @@
+@use '@angular/material' as mat;
+// Standalone preview only; federated consumers supply their shell theme.
+html {
+  @include mat.theme(
+    (
+      color: mat.$spring-green-palette,
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+body {
+  margin: 0;
+  font-family: Roboto, sans-serif;
+  background: #f8faf7;
+}

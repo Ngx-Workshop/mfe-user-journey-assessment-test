@@ -1,0 +1,355 @@
+:host {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  color: #193a34;
+  --ink: #193a34;
+  --muted: #6d8176;
+  --mat-button-filled-container-color: #276e5b;
+  --mat-button-filled-label-text-color: white;
+  --mat-button-outlined-label-text-color: #276e5b;
+  --mat-button-text-label-text-color: #276e5b;
+  --mat-progress-bar-active-indicator-color: #438776;
+  font-family: 'Roboto', sans-serif;
+}
+* {
+  box-sizing: border-box;
+}
+.journey {
+  background: #f8faf7;
+  min-height: 100%;
+}
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+}
+button:focus-visible {
+  outline: 3px solid #217c68;
+  outline-offset: 4px;
+}
+.hero {
+  padding: 45px clamp(22px, 5vw, 65px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 35px;
+  overflow: hidden;
+  background: #edf3e9;
+  border-bottom: 1px solid #e0e9dd;
+}
+.hero-kicker {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 2.5px;
+  color: #65836b;
+}
+.hero-kicker > span {
+  width: 6px;
+  height: 6px;
+  background: #6ca07b;
+  border-radius: 50%;
+}
+h1 {
+  font-size: clamp(32px, 4.5vw, 53px);
+  font-weight: 500;
+  letter-spacing: -2px;
+  line-height: 1.13;
+  margin: 23px 0 20px;
+}
+h1 em {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  color: #68826a;
+}
+.hero-copy p {
+  color: #6c806e;
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 0;
+}
+.hero-tags {
+  display: flex;
+  gap: 25px;
+  margin-top: 23px;
+  color: #69816b;
+  font-size: 10px;
+}
+.hero-tags span {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.hero-tags mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+}
+.hero-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 240px;
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+}
+.orb-one {
+  background: #dce8d8;
+  width: 210px;
+  height: 210px;
+  right: 0;
+  top: 32px;
+}
+.orb-two {
+  border: 1px solid #c7dbc7;
+  width: 235px;
+  height: 235px;
+  left: 0;
+  top: 5px;
+}
+.art-card {
+  position: relative;
+  width: 156px;
+  height: 187px;
+  background: #fffffff0;
+  box-shadow: 0 16px 28px #45614613;
+  border-radius: 15px;
+  padding: 19px;
+  transform: rotate(-9deg);
+}
+.art-icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: #eaf3e7;
+  color: #719269;
+  margin-bottom: 13px;
+}
+.art-card > span {
+  font-size: 6px;
+  letter-spacing: 1px;
+  color: #7c8c77;
+}
+.art-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+  height: 50px;
+  margin: 12px 0;
+}
+.art-bars i {
+  width: 18px;
+  background: #a5c0a0;
+  border-radius: 4px 4px 0 0;
+  height: 25%;
+}
+.art-bars i:nth-child(2) {
+  height: 44%;
+}
+.art-bars i:nth-child(3) {
+  height: 58%;
+  background: #88ab84;
+}
+.art-bars i:nth-child(4) {
+  height: 76%;
+  background: #749b74;
+}
+.art-bars i:nth-child(5) {
+  height: 100%;
+  background: #507f5c;
+}
+.art-line {
+  height: 4px;
+  border-radius: 4px;
+  background: #e4ebdf;
+  width: 100%;
+  margin-top: 7px;
+}
+.art-line.short {
+  width: 65%;
+}
+.art-check {
+  position: absolute;
+  bottom: 40px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: #7b9d71;
+  color: white;
+  border: 5px solid #edf3e9;
+  border-radius: 50%;
+}
+.spark {
+  position: absolute;
+  color: #9ab48c;
+}
+.spark-one {
+  top: 10px;
+  right: 35px;
+  font-size: 28px;
+}
+.spark-two {
+  bottom: 22px;
+  left: 15px;
+  font-size: 33px;
+}
+.journey-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 0 clamp(22px, 5vw, 65px);
+  background: white;
+  border-bottom: 1px solid #e2e9df;
+}
+.journey-nav > div {
+  display: flex;
+  gap: 28px;
+}
+.journey-nav button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 23px 0 20px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: none;
+  color: #859082;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.journey-nav button.active {
+  border-color: #4a8062;
+  color: #315b46;
+  font-weight: 650;
+}
+.journey-nav mat-icon {
+  font-size: 17px;
+  width: 17px;
+  height: 17px;
+}
+.journey-nav > span {
+  font-size: 10px;
+  color: #81907e;
+  white-space: nowrap;
+}
+.journey-nav i {
+  padding: 0 8px;
+  font-style: normal;
+}
+main {
+  max-width: 1340px;
+  margin: auto;
+  padding: 38px clamp(22px, 5vw, 65px) 50px;
+}
+main:focus {
+  outline: none;
+}
+.back {
+  margin: -15px 0 25px -10px;
+  font-size: 12px;
+}
+.loading {
+  margin: 30px 0;
+}
+.loading p {
+  font-size: 13px;
+  color: #798a78;
+}
+.error {
+  display: flex;
+  gap: 15px;
+  padding: 20px;
+  border-radius: 14px;
+  background: #fff0e5;
+  color: #935c35;
+  margin-bottom: 22px;
+  font-size: 13px;
+}
+.error p {
+  line-height: 1.5;
+}
+.missing {
+  padding: 40px 0;
+}
+footer {
+  border-top: 1px solid #e3eade;
+  margin: 0 clamp(22px, 5vw, 65px);
+  padding: 22px 0;
+  display: flex;
+  justify-content: space-between;
+  color: #8c9a86;
+  font-size: 10px;
+}
+footer > span:last-child {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+.footer-dot {
+  padding-left: 10px;
+  font-size: 14px;
+  color: #82a170;
+}
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr) 190px;
+    gap: 20px;
+  }
+  .hero-art {
+    transform: scale(0.8);
+    transform-origin: center;
+  }
+  .journey-nav > span {
+    display: none;
+  }
+  .hero {
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+}
+@media (max-width: 600px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .hero-art {
+    display: none;
+  }
+  h1 {
+    font-size: 36px;
+  }
+  .hero-tags {
+    gap: 15px;
+  }
+  .desktop-break {
+    display: none;
+  }
+  .journey-nav > div {
+    width: 100%;
+    gap: 18px;
+  }
+  .journey-nav button {
+    font-size: 11px;
+    padding: 18px 0 15px;
+  }
+  main {
+    padding-top: 30px;
+  }
+  .hero-copy p {
+    font-size: 12px;
+  }
+  footer {
+    gap: 18px;
+    line-height: 1.5;
+  }
+}

@@ -1,64 +1,29 @@
-# Architecture — learner assessment remote
+# Architecture — learner assessment journey
+Updated 2026-10-09 for [001 learner journey](../specs/001-learner-journey/spec.md).
 
-Source baseline: `5ca35f5`, reviewed 2026-09-30. This describes code in this checkout,
-not a verified deployed learner experience.
+The standalone OnPush `App` replaces the seed CRUD with subject discovery, level eligibility, an assessment workspace, completed results and proficiency/history. It does not own authoring, global navigation, auth, or scoring.
 
-## Responsibility and current implementation
-
-The repository name identifies the intended learner assessment journey. Today its
-root renders **Example MongoDB Docs**: list/filter, create/edit dialog, delete and
-copy ID. No subject selection, attempt resume, question answering, submission,
-score/result view, or assessment API client exists here. Those are future product
-requirements, not completed features. Assessment authoring belongs to the separate
-`mfe-user-journey-admin-assessment-test` repository.
-
-| Concern | Source | Observed behavior |
+| Concern | Source | Behavior |
 | --- | --- | --- |
-| Startup | `src/main.ts`, `src/bootstrap.ts` | Deferred standalone bootstrap |
-| Providers | `src/app/app.config.ts` | Zoneless change detection, HTTP, animations, reactive forms; no standalone router provider |
-| Root | `src/app/app.ts` | Named/default `App`; `ngx-seed-mfe` selector; example list |
-| Routes | `src/app/app.routes.ts` | Named `Routes`; empty path redirects to `overview`, which renders `App` |
-| Federation | `webpack.config.js`, `webpack.prod.config.js` | Still named `ngx-seed-mfe`; `remoteEntry.js`; `./Component` and `./Routes` |
-| List | `src/app/components/example-mongodb-doc-list.component.ts` | Signals, client-side name/description/ID filtering; CRUD actions and refresh |
-| Item | `src/app/components/example-mongodb-doc.component.ts` | Document card, edit/delete events, clipboard ID |
-| Dialog | `src/app/components/example-mongodb-doc-create-form-modal.component.ts` | Create/edit form; request errors close dialog |
-| Forms | `src/app/services/example-form.service.ts` | Typed form; same mapping reused for create and patch |
-| HTTP | `src/app/services/example-crud-api.service.ts` | Uses seed contracts, not assessment contracts |
-| Appearance | `src/styles.scss`, `src/index.html` | Empty global stylesheet; seed HTML title/root, hosted fonts |
+| Composition/navigation | `src/app/app.ts`, `app.html`, `app.scss` | Signals, query parameter navigation, loading/errors, owner history, keyboard focus on view changes |
+| Subjects/history | `src/app/assessment/catalog.component.*` | Supported subjects, eligible/in-progress/completed/locked tests, recent activity, weighted accuracy and highest passed level |
+| Taking a test | `src/app/assessment/runner.component.*` | Redacted questions, typed reactive choice control, sequential saves, browser recovery, review and final submission |
+| Results | `src/app/assessment/result.component.*` | Historical score/date, selected/correct answers and author feedback after completion |
+| HTTP/contracts | `src/app/assessment/assessment-api.service.ts` | `/api/assessment-test`, generated producer DTOs; no direct database or admin requests |
+| Standalone providers | `src/app/app.config.ts`, `src/styles.scss` | Router/HTTP/zoneless providers and standalone Material theme |
+| Federation | `webpack*.config.js` | Existing `ngx-seed-mfe`, `./Component`, `./Routes`, default App and named Routes preserved |
 
-Host consumption of exposed modules does not automatically apply standalone
-`appConfig`. Host providers, mount path, registry entry and theme need integration
-verification before a learner implementation is considered complete.
+## Navigation and host compatibility
+The public `overview` route remains. Query parameters select `view=subject&subject=ANGULAR`, `view=attempt&attempt=<owned-id>`, `view=result&attempt=<owned-id>`, or `view=history`. This works with hosts consuming either exposed Component or Routes, without changing the registry/mount contract. The host must provide Router and HttpClient with its session interceptors; standalone appConfig is not installed by remote loading. Query parameter changes reset view focus. UI styles remain scoped to this journey; the shell retains its theme and structural navigation.
 
-## Existing API boundary
+Production webpack disables module concatenation, preserving Angular 21 internal module identities across federation boundaries. Without this, an optimized standalone browser run failed with missing defineInjectable exports despite a successful build; the repaired optimized bundle was verified in the browser. Angular/shared dependency versions remain unchanged.
 
-Current dependency: `@tmdjr/seed-service-nestjs-contracts` version `0.0.7`.
-The base URL is `/api/example-crud/`. GET/POST use that base; GET/PATCH/DELETE by ID
-append `/${id}`, creating a double slash. Documents use example fields such as
-`name`, `type`, `description`, `archived` and optional address data. There is no
-assessment contracts dependency or environment-specific assessment URL in this repo.
+## Data ownership
+The service returns safe catalog metadata and owner-scoped history. Start sends subject plus the selected definition ID, then refreshes history. The runner saves complete answer-slot arrays (empty string for unanswered) sequentially to the owned attempt. Session storage retains newer unsaved answers under the owned attempt ID for interrupted requests; they are restored only after the service returns that attempt in the authenticated user's history, validated against safe question choices, and cleared after completion. No answer keys or credentials are saved there. Save failures block submit and Save & exit until retry succeeds; navigation/refresh can recover browser drafts. Submission failures reconcile against the completed owned result to handle a lost response after grading.
 
-## Assessment integration owners
+Passing still requires every answer correct. Completion advances to the next numbered level regardless of passing; retries are not introduced. Proficiency is the highest passed level, while accuracy is correct answers divided by all known completed question counts. The producer retains canonical userId plus uuid-only legacy ownership; no bulk data migration.
 
-| Owner | Boundary / next verification |
-| --- | --- |
-| `service-assessment-test` | Owns definitions, eligibility, attempts and scoring. Its native prefix is `/assessment-test`; see readiness review before consuming its current payloads. |
-| `mfe-user-journey-admin-assessment-test` | Separate authoring journey; not owned by this learner remote. |
-| Workshop shell and remote orchestrator | Own remote registration, mount path, providers and dev overrides. Current seed federation identity must be reconciled deliberately. |
-| BFF / Nginx owners | Own the browser-facing assessment prefix and forwarding/auth behavior; no mapping is proven by this checkout. |
-| Platform auth / user metadata | Supply session and shared state. Installed `@tmdjr/ngx-user-metadata` does not create a route guard or attempt ownership enforcement. |
+## Contract delivery
+The additive producer package 0.0.19 is generated from OpenAPI and bundled as a small archive in `vendor/` so npm ci remains reproducible before registry publication. It is not published by this task. Replace the file dependency with the released package when available. The old seed contract and CRUD source are removed.
 
-Names identify external owners, not required sibling filesystem paths. The service's
-producer package is `@tmdjr/service-nestjs-assessment-test-contracts`; choose a released
-version and validate its actual exports when replacing the seed client.
-
-## Toolchain and release
-
-Angular/Material/CDK 21.1.0, RxJS 7.8.2, TypeScript ~5.9.3. Federation 20.0.0 and
-ngx-build-plus ^20.0.0 remain inherited; shared Angular/RxJS versions are strict
-singletons. Production webpack reuses the base configuration.
-
-Build output: `dist/mfe-user-journey-assessment-test`; local serving: 4201.
-`.github/workflows/deploy.yml` installs/builds using Node 22 and copies assets to
-`/opt/mfe-remotes/mfe-user-journey-assessment-test/` on pushes to `main` (or manual
-workflow dispatch). It does not run tests or configure remote registration.
+Production requires the new service endpoints and gateway forwarding. Live beta still rendered the deployed seed remote in the inspected browser; local verification does not constitute deployment.

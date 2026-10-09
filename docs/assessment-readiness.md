@@ -1,3 +1,5 @@
+> Historical readiness snapshot. The implemented learner journey is documented in [001 learner journey](../specs/001-learner-journey/handoff.md).
+
 # Assessment readiness review and documentation handoff
 
 Review baseline: `5ca35f5`. Scope: read this codebase and migrate the seed's Markdown
