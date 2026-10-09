@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { ExampleMongodbDocListComponent } from './components/example-mongodb-doc-list.component';
-
+console.log('App module loaded - DEBUGGING');
 @Component({
   selector: 'ngx-seed-mfe',
   imports: [MatButtonModule, ExampleMongodbDocListComponent],
