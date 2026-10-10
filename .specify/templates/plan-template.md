@@ -4,6 +4,13 @@ Status: Draft
 Spec: [spec.md](spec.md)
 Updated: <date>
 
+## Technical Context
+
+**Language/Version**: TypeScript ~5.9.3 / Angular 21.1.0 (verify package.json)
+**Primary Dependencies**: Angular Material/CDK, RxJS, assessment contracts 0.0.19, Module Federation
+**Storage**: Browser in-memory state; persistence owned by service-assessment-test
+**Project Type**: Host-mounted Angular learner assessment remote
+
 ## Source baseline
 
 <Commit/reference, relevant source files, current behavior, and inherited
@@ -15,7 +22,7 @@ limitations that affect this feature. Verify dependency versions from manifests.
 | --- | --- | --- |
 | FR-001 | <Concrete approach> | <Actual paths and integration points> |
 
-## Constitution check
+## Constitution Check
 
 <For each applicable principle: satisfied, N/A with reason, or an explicit
 deviation with rationale/impact/follow-up. Revisit after implementation.>
@@ -48,3 +55,10 @@ or N/A with explanation. Avoid unrelated deployment work.>
 ## Decisions and open questions
 
 <Resolved choices with evidence; unresolved decisions and which tasks they block.>
+
+## Assessment-specific review
+
+Record subject/definition/owned attempt IDs, redacted question responses, sequential
+answer saves, local recovery, submit reconciliation, progression and historical
+feedback. Consult docs/architecture.md and docs/assessment-readiness.md. Preserve
+host routes, session providers and generated DTO compatibility.

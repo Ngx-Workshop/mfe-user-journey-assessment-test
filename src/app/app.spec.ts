@@ -86,7 +86,7 @@ describe('Learner journey', () => {
   it('renders subject cards and eligible tests without authoring controls', () => {
     const fixture = loaded();
     const element = fixture.nativeElement as HTMLElement;
-    expect(element.querySelectorAll('.subject-card').length).toBe(3);
+    expect(element.querySelectorAll('.assessment-catalog__subject-card').length).toBe(3);
     expect(element.textContent).toContain('Know your skills.');
     expect(element.textContent).not.toContain('MongoDB');
     params.next(
@@ -147,7 +147,7 @@ describe('Learner journey', () => {
     fixture.detectChanges();
     expect(
       (fixture.nativeElement as HTMLElement).querySelectorAll(
-        '.subject-card'
+        '.assessment-catalog__subject-card'
       ).length
     ).toBe(3);
   });

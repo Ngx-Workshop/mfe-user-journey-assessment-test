@@ -1,8 +1,8 @@
 # Agent entry point — mfe-user-journey-assessment-test
 
 This repository is the intended learner assessment journey for Ngx-Workshop.
-Its current source still renders example-document CRUD; assessment-taking UI is
-not implemented here. Assume access to this repository only. The shell, gateway, services, and shared libraries
+It implements subject discovery, assessment start/resume, saved answer progress,
+review/submission, historical results and proficiency. Assume access to this repository only. The shell, gateway, services, and shared libraries
 are separate repositories; their source is not required to understand this repository.
 
 ## Read before implementation
@@ -13,7 +13,7 @@ are separate repositories; their source is not required to understand this repos
 4. [Workflow](.specify/README.md): specify → plan → tasks → implement → verify.
 5. The relevant feature folder listed in [specs](specs/README.md), if one exists.
 
-Read [adoption status](docs/seed-adoption.md) and the [assessment readiness review](docs/assessment-readiness.md) before planning the learner journey.
+Read [adoption status](docs/seed-adoption.md) and the historical [assessment readiness review](docs/assessment-readiness.md) as background. Current refactor context is in [002 MVVM refactor](specs/002-mvvm-refactor/plan.md).
 All links above resolve within this checkout. Do not assume a sibling repository exists.
 
 ## Working rules
@@ -30,7 +30,15 @@ All links above resolve within this checkout. Do not assume a sibling repository
 - Treat `service-assessment-test` as the assessment data/scoring owner and
   `mfe-user-journey-admin-assessment-test` as the separate authoring owner.
   Do not turn the learner remote into an admin editor.
-- Keep API calls in services and use published contract types. Do not recreate a
+- Use MVVM: stateless AssessmentApi owns HTTP; root AssessmentStore owns shared
+  server state and data orchestration; scoped view models own route/form/view state.
+  Orchestration components compose focused input/output presentation components.
+- Inline component templates and SCSS; use BEM blocks/elements/modifiers and theme
+  tokens. Aim for about 230 lines per component; split by responsibility before
+  enforcing length. Shared style foundations may remain reusable SCSS mixins.
+- Use RxJS switchMap for replaceable reads, concatMap for ordered answer saves,
+  exhaustMap for duplicate-sensitive commands and lifetime-bound subscriptions.
+- Keep API calls in the stateless API client and use published contract types. Do not recreate a
   backend or load another remote inside this remote to work around missing access.
 - Resolve routine implementation choices and record assumptions. Ask only for
   missing decisions that materially affect requirements or external compatibility;

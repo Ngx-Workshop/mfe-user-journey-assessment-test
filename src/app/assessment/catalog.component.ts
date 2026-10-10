@@ -1,25 +1,29 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  output,
-} from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import type {
   LearnerAttemptDto,
   LearnerSubjectDto,
-  LearnerTestDto,
 } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { Subject, subjectInfo } from './assessment-api.service';
+import { Subject, TestSelection } from './assessment.models';
+import { CatalogOverviewComponent } from './catalog-overview.component';
+import { CatalogActivityComponent } from './catalog-activity.component';
+import { CatalogSubjectComponent } from './catalog-subject.component';
+import { CatalogHistoryComponent } from './catalog-history.component';
 
 @Component({
   selector: 'ngx-learner-catalog',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButtonModule, MatIconModule, DatePipe],
-  templateUrl: './catalog.component.html',
-  styleUrl: './catalog.component.scss',
+  imports: [CatalogOverviewComponent, CatalogActivityComponent, CatalogSubjectComponent, CatalogHistoryComponent],
+  template: `
+    @if (history()) {
+      <ngx-catalog-history [subjects]="subjects()" [attempts]="attempts()" (openAttempt)="openAttempt.emit($event)" />
+    } @else if (selected(); as subject) {
+      <ngx-catalog-subject [selected]="subject" [busy]="busy()" (openTest)="openTest.emit($event)" />
+    } @else {
+      <ngx-catalog-overview [subjects]="subjects()" (openSubject)="openSubject.emit($event)" />
+      <ngx-catalog-activity [attempts]="attempts()" (openAttempt)="openAttempt.emit($event)" />
+    }
+  `,
+  styles: [':host { display: block; min-width: 0; }'],
 })
 export class CatalogComponent {
   readonly subjects = input.required<LearnerSubjectDto[]>();
@@ -28,31 +32,6 @@ export class CatalogComponent {
   readonly history = input(false);
   readonly busy = input(false);
   readonly openSubject = output<Subject>();
-  readonly openTest = output<{
-    subject: Subject;
-    test: LearnerTestDto;
-  }>();
+  readonly openTest = output<TestSelection>();
   readonly openAttempt = output<LearnerAttemptDto>();
-  readonly info = subjectInfo;
-  readonly isInProgress = (test: LearnerTestDto) =>
-    test.status === 'in-progress';
-  readonly isAvailable = (test: LearnerTestDto) =>
-    test.status === 'available';
-  readonly labels = {
-    available: 'Ready to start',
-    'in-progress': 'In progress',
-    completed: 'Completed',
-    locked: 'Locked',
-  };
-  completed() {
-    return this.attempts().filter((a) => a.completed);
-  }
-  recent() {
-    return this.attempts().slice(0, 3);
-  }
-  percent(attempt: LearnerAttemptDto) {
-    return attempt.questionCount
-      ? Math.round((attempt.score / attempt.questionCount) * 100)
-      : null;
-  }
 }

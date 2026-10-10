@@ -137,4 +137,62 @@ describe('Assessment runner', () => {
       )
       .flush({});
   });
+  it('cancels a previous attempt load and never restores drafts before ownership is confirmed', () => {
+    sessionStorage.setItem(`assessment-draft:${attempt._id}`, JSON.stringify({ updated: Date.now() + 1000, answers: ['B', 'D'] }));
+    const fixture = TestBed.createComponent(RunnerComponent);
+    fixture.componentRef.setInput('attempt', attempt);
+    fixture.detectChanges();
+    const previous = http.expectOne(`/api/assessment-test/attempts/${attempt._id}/questions`);
+    expect(fixture.componentInstance.answers()).toEqual([]);
+    fixture.componentRef.setInput('attempt', { ...attempt, _id: 'next-owned', draftAnswers: ['', ''] });
+    fixture.detectChanges();
+    expect(previous.cancelled).toBeTrue();
+    http.expectOne('/api/assessment-test/attempts/next-owned/questions').flush({ ...questions, testId: 'next-owned' });
+    expect(fixture.componentInstance.answers()).toEqual(['', '']);
+    fixture.componentInstance.control.setValue('A');
+    const save = http.expectOne('/api/assessment-test/attempts/next-owned/answers');
+    expect(save.request.body.answers).toEqual(['A', '']);
+    save.flush({});
+  });
+
+  it('does not submit before questions load or after an empty question response', () => {
+    const fixture = TestBed.createComponent(RunnerComponent);
+    fixture.componentRef.setInput('attempt', attempt);
+    fixture.detectChanges();
+    fixture.componentInstance.submit();
+    expect(fixture.componentInstance.vm.canSubmit()).toBeFalse();
+    http.expectNone('/api/assessment-test/submit-test');
+    http.expectOne(`/api/assessment-test/attempts/${attempt._id}/questions`).flush({ ...questions, testQuestions: [] });
+    fixture.componentInstance.submit();
+    expect(fixture.componentInstance.vm.canSubmit()).toBeFalse();
+    http.expectNone('/api/assessment-test/submit-test');
+  });
+
+  it('cancels pending saves and removes the unload listener on destruction', () => {
+    const removal = spyOn(window, 'removeEventListener').and.callThrough();
+    const fixture = loaded();
+    fixture.componentInstance.control.setValue('C');
+    const save = http.expectOne(`/api/assessment-test/attempts/${attempt._id}/answers`);
+    fixture.destroy();
+    expect(save.cancelled).toBeTrue();
+    expect(removal).toHaveBeenCalledWith('beforeunload', jasmine.any(Function));
+  });
+
+  it('keeps server answers when a newer browser draft contains invalid choices', () => {
+    sessionStorage.setItem(`assessment-draft:${attempt._id}`, JSON.stringify({ updated: Date.now() + 1000, answers: ['invalid', 'D'] }));
+    const fixture = loaded();
+    expect(fixture.componentInstance.answers()).toEqual(['A', '']);
+    http.expectNone(`/api/assessment-test/attempts/${attempt._id}/answers`);
+  });
+
+  it('continues server persistence when browser storage is unavailable', () => {
+    spyOn(Storage.prototype, 'setItem').and.throwError('Storage unavailable');
+    const fixture = loaded();
+    fixture.componentInstance.control.setValue('C');
+    expect(fixture.componentInstance.storageWarning()).toContain('Browser recovery is unavailable');
+    http.expectOne(`/api/assessment-test/attempts/${attempt._id}/answers`).flush({});
+    expect(fixture.componentInstance.pending()).toBe(0);
+    expect(fixture.componentInstance.saveError()).toBe('');
+  });
+
 });

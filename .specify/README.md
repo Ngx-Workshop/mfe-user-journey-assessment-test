@@ -14,7 +14,7 @@ steps using ordinary file reads and edits.
 | [Constitution](memory/constitution.md) | Durable engineering principles | Principles change intentionally |
 | [Architecture](../docs/architecture.md) | Current ownership, source map, external contracts | Architecture/integration changes |
 | [Development](../docs/development.md) | Commands, verification, inherited limitations | Tooling or known behavior changes |
-| [Seed adoption](../docs/seed-adoption.md) | Checklist for a new repository copied from this seed | Scaffolding requirements change |
+| [Migration record](../docs/seed-adoption.md) | Repository migration record and remaining integration decisions | Migration status changes |
 | [Templates](templates/) | Starting points for feature artifacts | Workflow improves |
 | [Feature index](../specs/README.md) | Links and status for actual work | Feature starts or status changes |
 | `specs/NNN-short-name/` | One feature's spec, plan, tasks, and handoff | That feature evolves |
@@ -98,9 +98,16 @@ contract/behavior requested, producer/consumer compatibility, order of changes,
 and acceptance check. Continue authorized local work. Do not silently change the
 external contract in a mock or claim that a handoff deployed the other service.
 
-## Keeping the workflow reusable
+## Repository ownership
 
-Each seed contains a complete copy of these workflow/templates so a clone works
-independently. When changing the shared process in the seeds, review both copies.
-Adopted product repositories own their subsequent changes; there is no automatic
-synchronization or dependency on a workspace-level file.
+This repository owns its workflow and templates. They were adapted from the local
+seed workflow on 2026-10-01; there is no runtime dependency on a seed or sibling
+checkout. Do not copy unrelated feature histories. Read the assessment readiness
+review before selecting new implementation work.
+
+## Optional helpers
+
+This checkout provides Markdown templates only; no Spec Kit agents, prompt wrappers
+or helper scripts are required. Use ordinary file reads and edits. Keep AGENTS.md
+as the maintained entry point. The plan template retains the four technical fields
+used by optional upstream helpers, but does not assume they are installed here.

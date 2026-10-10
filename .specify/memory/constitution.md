@@ -1,9 +1,9 @@
 # Constitution — Learner assessment journey
 
-Version: 1.0.0 · Adopted: 2026-09-30
+Version: 1.1.0 · Adopted: 2026-09-30 · Updated: 2026-10-09
 
-These are design requirements for future work, not a claim that every inherited
-inherited implementation already satisfies them. Current gaps live in the development guide.
+These are durable requirements. Current implementation and verification evidence
+live in the architecture/development guides and feature handoffs.
 
 ## 1. One learner journey, one responsibility
 
@@ -11,8 +11,7 @@ Ngx-Workshop is a learning platform using independently maintained repositories.
 A remote owns a focused user journey or a structural element. The host shell
 loads and composes remotes. Do not nest remotes or assume ownership of global
 navigation, authentication, or other journeys. This remote owns learner assessment
-interaction; authoring belongs to the separate admin remote. The existing example
-CRUD is a scaffold, not the assessment product specification.
+interaction; authoring belongs to the separate admin remote. The learner specifications describe implemented behavior and compatibility.
 
 ## 2. Preserve integration contracts
 
@@ -21,13 +20,26 @@ singletons, and HTTP contracts as public interfaces. Document compatibility and
 consumer impact before changing them. The gateway owns routing from browser API
 paths to services; this remote does not choose production service addresses.
 
-## 3. Follow the Angular model already in use
+## 3. Angular MVVM and reactive data flow
 
-Use standalone components, zoneless-compatible state updates, Angular Material,
-typed reactive forms, signals for local state, and RxJS for asynchronous flows.
-Prefer focused components and services; use `OnPush` where appropriate. Avoid
-introducing another state framework or weakening types without a demonstrated need.
-Keep Angular and federation shared versions aligned with the consuming shell.
+Use standalone OnPush components, zoneless-compatible signals, Angular Material,
+typed reactive forms and RxJS streams. The stateless HTTP client owns transport and
+generated DTO mapping. A root singleton store owns shared server state and data
+orchestration; it never depends on components, forms or Router. Scoped view models
+own route/view/form state and call the store. Orchestration components manage
+composition/lifecycle; presentation components receive inputs and emit user intent.
+Nested orchestration is allowed when it reflects distinct responsibilities.
+
+Use switchMap for replaceable reads, concatMap for ordered saves and exhaustMap
+for duplicate-sensitive commands. Bind subscriptions/listeners to their lifetime.
+Browser draft recovery is an adapter, restored only after owned questions load.
+Never put an active runner's mutable form/unsaved answers in shared singleton state.
+
+Inline component HTML and SCSS in TypeScript; shared SCSS foundations may remain
+mixins. Use BEM class naming and shell theme tokens. Aim for approximately 230
+lines per component; a justified larger cohesive component is permitted. Avoid
+splitting merely to meet a line count or hiding logic in templates. Keep Angular
+and federation dependency versions compatible with the consuming shell.
 
 ## 4. Put data ownership on the server
 

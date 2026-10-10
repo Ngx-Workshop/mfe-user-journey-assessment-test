@@ -33,3 +33,8 @@ that do not apply. Unchecked external tasks remain visible in the handoff.
 | Task | Result or blocker | Evidence |
 | --- | --- | --- |
 | T001 | <Not started/in progress/complete/blocked> | <Command result, file, or check> |
+
+## Constitution Check
+
+Record applicable local principles, deviations with rationale and verification
+needed. Distinguish existing gaps from the feature's acceptance obligations.

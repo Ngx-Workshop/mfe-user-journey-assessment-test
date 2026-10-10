@@ -59,3 +59,14 @@ gateway, or other service integration is within the acceptance scope.>
 | ID | Assumption or question | Impact | Resolution/evidence |
 | --- | --- | --- | --- |
 | Q-001 | <Question or assumption; NEEDS CLARIFICATION if consequential> | <Affected scope> | <Answer, accepted assumption, or pending> |
+
+## Constitution Check
+
+Record applicable local principles, deviations with rationale and verification
+needed. Distinguish existing gaps from the feature's acceptance obligations.
+
+## Learner assessment boundaries
+
+Specify discovery, eligibility, ownership, start/resume, answer persistence,
+review/submission, historical feedback and progression as applicable. Scoring and
+authorization belong to service-assessment-test; authoring belongs to the admin MFE.

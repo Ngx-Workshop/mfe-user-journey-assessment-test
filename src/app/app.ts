@@ -1,31 +1,20 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   ElementRef,
   Injector,
   afterNextRender,
-  computed,
+  effect,
   inject,
-  signal,
   viewChild,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { forkJoin } from 'rxjs';
-import type {
-  LearnerAttemptDto,
-  LearnerSubjectDto,
-  LearnerTestDto,
-} from '@tmdjr/service-nestjs-assessment-test-contracts';
-import {
-  AssessmentApi,
-  Subject,
-  apiError,
-} from './assessment/assessment-api.service';
+import { LearnerAttemptDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
+import { AssessmentView, Subject, TestSelection } from './assessment/assessment.models';
+import { JourneyViewModel } from './journey.view-model';
+import { JourneyHeroComponent } from './assessment/journey-hero.component';
 import { CatalogComponent } from './assessment/catalog.component';
 import { RunnerComponent } from './assessment/runner.component';
 import { ResultComponent } from './assessment/result.component';
@@ -33,165 +22,209 @@ import { ResultComponent } from './assessment/result.component';
 @Component({
   selector: 'ngx-seed-mfe',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    MatProgressBarModule,
-    CatalogComponent,
-    RunnerComponent,
-    ResultComponent,
-  ],
-  templateUrl: './app.html',
-  styleUrl: './app.scss',
+  providers: [JourneyViewModel],
+  imports: [MatButtonModule, MatIconModule, MatProgressBarModule, JourneyHeroComponent, CatalogComponent, RunnerComponent, ResultComponent],
+  template: `
+<div class="assessment-journey__journey">
+  @if (view() !== 'attempt') {
+  <ngx-journey-hero />
+  <nav class="assessment-journey__journey-nav" aria-label="Assessment views">
+    <div>
+      <button class="assessment-journey__nav-button"
+        [class.assessment-journey__nav-button--active]="view() !== 'history' && view() !== 'result'"
+        [attr.aria-current]="view() === 'overview' || view() === 'subject' ? 'page' : null"
+        (click)="navigate('overview')">
+        <mat-icon>grid_view</mat-icon>Explore subjects</button><button class="assessment-journey__nav-button"
+        [class.assessment-journey__nav-button--active]="view() === 'history' || view() === 'result'"
+        [attr.aria-current]="view() === 'history' || view() === 'result' ? 'page' : null"
+        (click)="navigate('history')">
+        <mat-icon>history</mat-icon>History & proficiency
+      </button>
+    </div>
+    <span>{{ completedCount() }} completed <i>·</i> {{ passedCount() }}
+      passed</span>
+  </nav>
+  }
+  <main #content tabindex="-1" [attr.aria-busy]="loading() || busy()">
+    @if (view() === 'subject' || view() === 'result') {
+    <button
+      class="assessment-journey__back"
+      mat-button
+      (click)="navigate(view() === 'result' ? 'history' : 'overview')">
+      <mat-icon>arrow_back</mat-icon>{{ view() === 'result' ? 'Back to
+      history' : 'All subjects' }}
+    </button>
+    } @if (loading()) {
+    <div class="assessment-journey__loading" role="status">
+      <mat-progress-bar
+        mode="indeterminate"
+        aria-label="Loading assessments"
+      />
+      <p>Getting your learning journey ready…</p>
+    </div>
+    } @if (error()) {
+    <div class="assessment-journey__error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <div>
+        <strong>We couldn’t complete that request</strong>
+        <p>{{ error() }}</p>
+        <button mat-button (click)="load()" [disabled]="loading()">
+          Refresh assessments
+        </button>
+      </div>
+    </div>
+    } @if (!loading() && subjects().length) { @if (view() ===
+    'attempt') { @if (active(); as attempt) { @for (item of [attempt];
+    track item._id) { @if (item.completed) {
+    <ngx-assessment-result
+      [id]="item._id"
+      (back)="navigate('history')"
+      (nextSubject)="openSubject($event)"
+    />
+    } @else {
+    <ngx-assessment-runner
+      [attempt]="item"
+      (finished)="finish($event)"
+      (exit)="exit()"
+    />
+    } } } @else {
+    <div class="assessment-journey__missing">
+      <h2>Assessment unavailable</h2>
+      <p>This attempt couldn’t be found in your learning record.</p>
+      <button mat-button (click)="navigate('overview')">
+        Explore subjects
+      </button>
+    </div>
+    } } @else if (view() === 'result' && attemptId()) { @for (id of
+    [attemptId()!]; track id) {
+    <ngx-assessment-result
+      [id]="id"
+      (back)="navigate('history')"
+      (nextSubject)="openSubject($event)"
+    />
+    } } @else if (view() === 'subject' && !selected()) {
+    <div class="assessment-journey__missing">
+      <h2>Subject unavailable</h2>
+      <button mat-button (click)="navigate('overview')">
+        Explore subjects
+      </button>
+    </div>
+    } @else {
+    <ngx-learner-catalog
+      [subjects]="subjects()"
+      [attempts]="attempts()"
+      [selected]="view() === 'subject' ? selected() : null"
+      [history]="view() === 'history'"
+      [busy]="busy()"
+      (openSubject)="openSubject($event)"
+      (openTest)="openTest($event)"
+      (openAttempt)="openAttempt($event)"
+    />
+    } }
+  </main>
+  <footer>
+    <span>Small steps. Lasting understanding.</span><span>NGX WORKSHOP <span class="assessment-journey__footer-dot">✦</span></span>
+  </footer>
+</div>
+  `,
+  styles: [`
+:host {
+    display: block; min-width: 0; width: 100%; color: var(--ink); --ink: var(--mat-sys-on-surface);
+    --muted: var(--mat-sys-on-surface-variant); --panel: var(--mat-sys-surface-container-lowest);
+    --soft: var(--mat-sys-surface-container); --line: var(--mat-sys-outline-variant);
+    --accent: var(--mat-sys-primary); --primary-soft: var(--mat-sys-primary-container);
+    --on-primary-soft: var(--mat-sys-on-primary-container);
+    --secondary-soft: var(--mat-sys-secondary-container);
+    --on-secondary-soft: var(--mat-sys-on-secondary-container);
+    --tertiary-soft: var(--mat-sys-tertiary-container);
+    --on-tertiary-soft: var(--mat-sys-on-tertiary-container);
+    --error-soft: var(--mat-sys-error-container); --on-error-soft: var(--mat-sys-on-error-container);
+    font-family: 'Roboto', sans-serif;
+  }
+* { box-sizing: border-box; }
+.assessment-journey__journey { min-height: 100%; }
+button { font-family: inherit; cursor: pointer; }
+button:disabled { cursor: default; }
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+.assessment-journey__journey-nav {
+    display: flex; justify-content: space-between; align-items: center; gap: 15px;
+    padding: 0 clamp(22px, 5vw, 65px); background: var(--panel); border-bottom: 1px solid var(--line);
+  }
+.assessment-journey__journey-nav > div { display: flex; gap: 28px; }
+.assessment-journey__journey-nav button {
+    display: flex; align-items: center; gap: 8px; padding: 23px 0 20px; border: 0;
+    border-bottom: 3px solid transparent; background: none; color: var(--muted); font-size: 12px;
+    white-space: nowrap;
+  }
+.assessment-journey__journey-nav button.assessment-journey__nav-button--active {
+    border-color: var(--accent); color: var(--accent); font-weight: 650;
+  }
+.assessment-journey__journey-nav mat-icon { font-size: 17px; width: 17px; height: 17px; }
+.assessment-journey__journey-nav > span { font-size: 10px; color: var(--muted); white-space: nowrap; }
+.assessment-journey__journey-nav i { padding: 0 8px; font-style: normal; }
+main { max-width: 1340px; margin: auto; padding: 38px clamp(22px, 5vw, 65px) 50px; }
+main:focus { outline: none; }
+.assessment-journey__back { margin: -15px 0 25px -10px; font-size: 12px; }
+.assessment-journey__loading { margin: 30px 0; }
+.assessment-journey__loading p { font-size: 13px; color: var(--muted); }
+.assessment-journey__error {
+    display: flex; gap: 15px; padding: 20px; border-radius: 14px; background: var(--error-soft);
+    color: var(--on-error-soft); margin-bottom: 22px; font-size: 13px;
+  }
+.assessment-journey__error p { line-height: 1.5; }
+.assessment-journey__missing { padding: 40px 0; }
+footer {
+    border-top: 1px solid var(--line); margin: 0 clamp(22px, 5vw, 65px); padding: 22px 0; display: flex;
+    justify-content: space-between; color: var(--muted); font-size: 10px;
+  }
+footer > span:last-child { font-size: 8px; letter-spacing: 1.5px; }
+.assessment-journey__footer-dot { padding-left: 10px; font-size: 14px; color: var(--accent); }
+@media (max-width: 900px) {
+.assessment-journey__journey-nav > span { display: none; }
+}
+@media (max-width: 600px) {
+.assessment-journey__journey-nav > div { width: 100%; gap: 18px; }
+.assessment-journey__journey-nav button { font-size: 11px; padding: 18px 0 15px; }
+main { padding-top: 30px; }
+footer { gap: 18px; line-height: 1.5; }
+}  `],
 })
 export class App {
-  private readonly api = inject(AssessmentApi);
-  private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
-  private readonly destroy = inject(DestroyRef);
-  private readonly injector = inject(Injector);
-  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  readonly vm = inject(JourneyViewModel);
   readonly content = viewChild<ElementRef<HTMLElement>>('content');
-  readonly subjects = signal<LearnerSubjectDto[]>([]);
-  readonly attempts = signal<LearnerAttemptDto[]>([]);
-  readonly loading = signal(true);
-  readonly busy = signal(false);
-  readonly error = signal('');
-  readonly view = signal('overview');
-  readonly subject = signal<string | null>(null);
-  readonly attemptId = signal<string | null>(null);
-  readonly selected = computed(
-    () =>
-      this.subjects().find((s) => s.subject === this.subject()) ??
-      null
-  );
-  readonly active = computed(
-    () =>
-      this.attempts().find((a) => a._id === this.attemptId()) ?? null
-  );
-  readonly completedCount = computed(
-    () => this.attempts().filter((a) => a.completed).length
-  );
-  readonly passedCount = computed(
-    () =>
-      this.attempts().filter((a) => a.completed && a.passed).length
-  );
+  readonly subjects = this.vm.subjects;
+  readonly attempts = this.vm.attempts;
+  readonly loading = this.vm.loading;
+  readonly busy = this.vm.busy;
+  readonly error = this.vm.error;
+  readonly view = this.vm.view;
+  readonly subject = this.vm.subject;
+  readonly attemptId = this.vm.attemptId;
+  readonly selected = this.vm.selected;
+  readonly active = this.vm.active;
+  readonly completedCount = this.vm.completedCount;
+  readonly passedCount = this.vm.passedCount;
   constructor() {
-    this.route.queryParamMap
-      .pipe(takeUntilDestroyed(this.destroy))
-      .subscribe((params) => {
-        const view = params.get('view') ?? 'overview';
-        this.view.set(
-          [
-            'overview',
-            'subject',
-            'history',
-            'attempt',
-            'result',
-          ].includes(view)
-            ? view
-            : 'overview'
-        );
-        this.subject.set(params.get('subject'));
-        this.attemptId.set(params.get('attempt'));
-        this.error.set('');
-        afterNextRender(
-          () => {
-            const target =
-              this.view() === 'overview'
-                ? this.host.nativeElement
-                : this.content()?.nativeElement;
-            target?.scrollIntoView({ block: 'start' });
-            this.content()?.nativeElement.focus({
-              preventScroll: true,
-            });
-          },
-          { injector: this.injector }
-        );
-      });
-    this.load();
-  }
-  load() {
-    this.loading.set(true);
-    this.error.set('');
-    forkJoin({
-      subjects: this.api.catalog(),
-      attempts: this.api.history(),
-    })
-      .pipe(takeUntilDestroyed(this.destroy))
-      .subscribe({
-        next: (data) => {
-          this.subjects.set(data.subjects);
-          this.attempts.set(data.attempts);
-          this.loading.set(false);
-        },
-        error: (error) => {
-          this.error.set(apiError(error));
-          this.loading.set(false);
-        },
-      });
-  }
-  navigate(
-    view: string,
-    subject: string | null = null,
-    attempt: string | null = null
-  ) {
-    void this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: {
-        view: view === 'overview' ? null : view,
-        subject,
-        attempt,
-      },
+    const host = inject<ElementRef<HTMLElement>>(ElementRef);
+    const injector = inject(Injector);
+    effect(() => {
+      const view = this.view();
+      const subject = this.subject();
+      const attempt = this.attemptId();
+      afterNextRender(() => {
+        // Ignore a superseded navigation callback.
+        if (view !== this.view() || subject !== this.subject() || attempt !== this.attemptId()) return;
+        (view === 'overview' ? host.nativeElement : this.content()?.nativeElement)?.scrollIntoView({ block: 'start' });
+        this.content()?.nativeElement.focus({ preventScroll: true });
+      }, { injector });
     });
   }
-  openSubject(subject: Subject) {
-    this.navigate('subject', subject);
-  }
-  openAttempt(attempt: LearnerAttemptDto) {
-    this.navigate(
-      attempt.completed ? 'result' : 'attempt',
-      attempt.subject,
-      attempt._id
-    );
-  }
-  openTest(event: { subject: Subject; test: LearnerTestDto }) {
-    if (this.busy() || event.test.status === 'locked') return;
-    if (event.test.attemptId) {
-      this.navigate(
-        event.test.status === 'completed' ? 'result' : 'attempt',
-        event.subject,
-        event.test.attemptId
-      );
-      return;
-    }
-    this.busy.set(true);
-    this.error.set('');
-    this.api
-      .start({
-        subject: event.subject,
-        assessmentTestId: event.test.id,
-      })
-      .pipe(takeUntilDestroyed(this.destroy))
-      .subscribe({
-        next: (attempt) => {
-          this.busy.set(false);
-          this.navigate('attempt', event.subject, attempt._id);
-          this.load();
-        },
-        error: (error) => {
-          this.error.set(apiError(error));
-          this.busy.set(false);
-        },
-      });
-  }
-  finish(id: string) {
-    this.navigate('result', this.subject(), id);
-    this.load();
-  }
-  exit() {
-    this.navigate('subject', this.subject());
-    this.load();
-  }
+  load() { this.vm.load(); }
+  navigate(view: AssessmentView, subject: string | null = null, attempt: string | null = null) { this.vm.navigate(view, subject, attempt); }
+  openSubject(subject: Subject) { this.vm.openSubject(subject); }
+  openTest(event: TestSelection) { this.vm.openTest(event); }
+  openAttempt(attempt: LearnerAttemptDto) { this.vm.openAttempt(attempt); }
+  finish(id: string) { this.vm.finish(id); }
+  exit() { this.vm.exit(); }
 }
 export default App;

@@ -2,243 +2,129 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  OnInit,
-  computed,
+  OnChanges,
   inject,
   input,
   output,
-  signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import {
-  Subject as RxSubject,
-  catchError,
-  concatMap,
-  of,
-  tap,
-} from 'rxjs';
-import type {
-  AttemptQuestionsDto,
-  LearnerAttemptDto,
-} from '@tmdjr/service-nestjs-assessment-test-contracts';
-import {
-  AssessmentApi,
-  apiError,
-  subjectInfo,
-} from './assessment-api.service';
+import type { LearnerAttemptDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
+import { subjectInfo } from './assessment.models';
+import { RunnerViewModel } from './runner.view-model';
+import { RunnerProgressComponent } from './runner-progress.component';
+import { RunnerQuestionComponent } from './runner-question.component';
+import { RunnerReviewComponent } from './runner-review.component';
 
 @Component({
   selector: 'ngx-assessment-runner',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatRadioModule,
-    MatProgressBarModule,
-  ],
-  templateUrl: './runner.component.html',
-  styleUrl: './runner.component.scss',
+  providers: [RunnerViewModel],
+  imports: [MatButtonModule, MatIconModule, MatProgressBarModule, RunnerProgressComponent, RunnerQuestionComponent, RunnerReviewComponent],
+  template: `
+<div class="assessment-runner__runner-heading">
+  <div>
+    <span class="assessment-ui__eyebrow">{{ info[attempt().subject].name }} · LEVEL
+      {{ attempt().level }}</span>
+    <h2>{{ attempt().testName }}</h2>
+  </div>
+  <button
+    mat-stroked-button
+    [disabled]="pending() > 0 || !!saveError() || submitting()"
+    (click)="exit.emit()">
+    <mat-icon>pause</mat-icon>Save & exit
+  </button>
+</div>
+@if (loading()) {
+  <mat-progress-bar
+    mode="indeterminate"
+    aria-label="Loading questions"
+  />
+}
+@if (storageWarning()) {
+  <p role="status">{{ storageWarning() }}</p>
+}
+@if (error()) {
+  <div class="assessment-runner__error" role="alert">
+    <p>{{ error() }}</p>
+    @if (!questions()) {
+      <button mat-button (click)="load()">Try again</button>
+    }
+  </div>
+}
+@if (questions(); as data) {
+  <div class="assessment-runner__runner-layout">
+    <ngx-runner-progress [questions]="data" [answers]="answers()" [answered]="answered()"
+      [current]="current()" [review]="review()" [pending]="pending()" [saveError]="saveError()"
+      [submitting]="submitting()" (go)="go($event)" (showReview)="review.set(true)" (save)="save()" />
+    <div class="assessment-runner__workspace" [attr.aria-busy]="submitting()">
+      @if (review()) {
+        <ngx-runner-review [questions]="data" [answers]="answers()" [answered]="answered()"
+          [pending]="pending()" [saveError]="saveError()" [submitting]="submitting()"
+          [canSubmit]="vm.canSubmit()" (go)="go($event)" (submit)="submit()" />
+      } @else if (question(); as q) {
+        <ngx-runner-question [question]="q" [current]="current()" [answers]="answers()"
+          [submitting]="submitting()" [control]="control" (go)="go($event)" (showReview)="review.set(true)" />
+      }
+    </div>
+  </div>
+}
+  `,
+  styles: [`@use './shared' as ui; @include ui.foundation(('eyebrow',));
+.assessment-runner__runner-heading {
+    display: flex; justify-content: space-between; gap: 20px; align-items: center; margin-bottom: 30px;
+  }
+.assessment-runner__runner-heading h2 { font-size: 27px; }
+.assessment-runner__runner-heading button { white-space: nowrap; }
+.assessment-runner__runner-layout {
+    display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 25px; align-items: start;
+  }
+.assessment-runner__workspace {
+    min-width: 0; padding: 35px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 20px; min-height: 430px;
+  }
+.assessment-runner__error {
+    background: var(--error-soft); padding: 16px; border-radius: 12px; font-size: 13px;
+    color: var(--on-error-soft); margin: 20px 0;
+  }
+.assessment-runner__error p { color: inherit; }
+@media (max-width: 850px) {
+.assessment-runner__runner-layout { grid-template-columns: minmax(0, 1fr); }
+.assessment-runner__workspace { min-width: 0; padding: 24px; }
+}
+@media (max-width: 600px) {
+.assessment-runner__runner-heading { align-items: flex-start; flex-direction: column; }
+.assessment-runner__runner-heading h2 { font-size: 23px; }
+}
+  `],
 })
-export class RunnerComponent implements OnInit {
+export class RunnerComponent implements OnChanges {
+  readonly vm = inject(RunnerViewModel);
   readonly attempt = input.required<LearnerAttemptDto>();
   readonly finished = output<string>();
   readonly exit = output<void>();
-  private readonly api = inject(AssessmentApi);
-  private readonly destroy = inject(DestroyRef);
-  private readonly saves = new RxSubject<string[]>();
-  readonly questions = signal<AttemptQuestionsDto | null>(null);
-  readonly loading = signal(true);
-  readonly error = signal('');
-  readonly saveError = signal('');
-  readonly storageWarning = signal('');
-  readonly answers = signal<string[]>([]);
-  readonly current = signal(0);
-  readonly review = signal(false);
-  readonly pending = signal(0);
-  readonly submitting = signal(false);
-  readonly control = new FormControl('', { nonNullable: true });
-  readonly answered = computed(
-    () => this.answers().filter(Boolean).length
-  );
-  readonly question = computed(
-    () => this.questions()?.testQuestions[this.current()]
-  );
   readonly info = subjectInfo;
-  readonly letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  ngOnInit() {
-    this.saves
-      .pipe(
-        concatMap((answers) =>
-          this.api.save(this.attempt()._id, answers).pipe(
-            tap(() => {
-              this.saveError.set('');
-            }),
-            catchError((error) => {
-              this.saveError.set(apiError(error));
-              return of(null);
-            }),
-            tap(() => this.pending.update((n) => n - 1))
-          )
-        ),
-        takeUntilDestroyed(this.destroy)
-      )
-      .subscribe();
-    this.control.valueChanges
-      .pipe(takeUntilDestroyed(this.destroy))
-      .subscribe((value) => {
-        this.answers.update((answers) =>
-          answers.map((answer, i) =>
-            i === this.current() ? value : answer
-          )
-        );
-        this.remember();
-        this.save();
-      });
-    const beforeUnload = (event: BeforeUnloadEvent) => {
-      if (this.pending() || this.saveError() || this.submitting()) {
-        event.preventDefault();
-        event.returnValue = '';
-      }
-    };
-    window.addEventListener('beforeunload', beforeUnload);
-    this.destroy.onDestroy(() =>
-      window.removeEventListener('beforeunload', beforeUnload)
-    );
-    this.load();
+  readonly questions = this.vm.questions;
+  readonly loading = this.vm.loading;
+  readonly error = this.vm.error;
+  readonly saveError = this.vm.saveError;
+  readonly storageWarning = this.vm.storageWarning;
+  readonly answers = this.vm.answers;
+  readonly current = this.vm.current;
+  readonly review = this.vm.review;
+  readonly pending = this.vm.pending;
+  readonly submitting = this.vm.submitting;
+  readonly control = this.vm.control;
+  readonly answered = this.vm.answered;
+  readonly question = this.vm.question;
+  constructor() {
+    this.vm.finished$.pipe(takeUntilDestroyed(inject(DestroyRef))).subscribe(id => this.finished.emit(id));
   }
-  load() {
-    this.loading.set(true);
-    this.error.set('');
-    this.api
-      .questions(this.attempt()._id)
-      .pipe(takeUntilDestroyed(this.destroy))
-      .subscribe({
-        next: (data) => {
-          this.questions.set(data);
-          let draft = this.attempt().draftAnswers;
-          try {
-            const local: unknown = JSON.parse(
-              sessionStorage.getItem(this.key()) ?? 'null'
-            );
-            if (
-              local &&
-              typeof local === 'object' &&
-              'updated' in local &&
-              'answers' in local &&
-              typeof local.updated === 'number' &&
-              local.updated >
-                Date.parse(this.attempt().lastUpdated) &&
-              Array.isArray(local.answers) &&
-              local.answers.length === data.testQuestions.length &&
-              local.answers.every(
-                (a: unknown, i: number) =>
-                  typeof a === 'string' &&
-                  (a === '' ||
-                    data.testQuestions[i].choices.some(
-                      (c) => c.value === a
-                    ))
-              )
-            )
-              draft = local.answers as string[];
-          } catch {
-            this.storageWarning.set(
-              'Browser recovery is unavailable. Wait for “All changes saved” before leaving.'
-            );
-          }
-          this.answers.set(
-            data.testQuestions.map((_, i) => draft[i] ?? '')
-          );
-          this.go(
-            Math.max(
-              0,
-              this.answers().findIndex((a) => !a)
-            )
-          );
-          this.loading.set(false);
-          if (
-            JSON.stringify(draft) !==
-            JSON.stringify(this.attempt().draftAnswers)
-          )
-            this.save();
-        },
-        error: (error) => {
-          this.error.set(apiError(error));
-          this.loading.set(false);
-        },
-      });
-  }
-  private key() {
-    return `assessment-draft:${this.attempt()._id}`;
-  }
-  private remember() {
-    try {
-      sessionStorage.setItem(
-        this.key(),
-        JSON.stringify({
-          updated: Date.now(),
-          answers: this.answers(),
-        })
-      );
-    } catch {
-      this.storageWarning.set(
-        'Browser recovery is unavailable. Wait for “All changes saved” before leaving.'
-      );
-    }
-  }
-  save() {
-    this.pending.update((n) => n + 1);
-    this.saves.next([...this.answers()]);
-  }
-  go(index: number) {
-    this.current.set(index);
-    this.review.set(false);
-    this.control.setValue(this.answers()[index] ?? '', {
-      emitEvent: false,
-    });
-  }
-  submit() {
-    if (
-      this.answered() !== this.answers().length ||
-      this.pending() ||
-      this.submitting() ||
-      this.saveError()
-    )
-      return;
-    this.submitting.set(true);
-    this.control.disable({ emitEvent: false });
-    this.error.set('');
-    this.api
-      .submit(this.attempt()._id, [...this.answers()])
-      .pipe(takeUntilDestroyed(this.destroy))
-      .subscribe({
-        next: () => this.complete(),
-        error: (error) => {
-          // A response may be lost after grading. Reconcile only with an owned completed result.
-          this.api
-            .result(this.attempt()._id)
-            .pipe(takeUntilDestroyed(this.destroy))
-            .subscribe({
-              next: () => this.complete(),
-              error: () => {
-                this.error.set(apiError(error));
-                this.submitting.set(false);
-                this.control.enable({ emitEvent: false });
-              },
-            });
-        },
-      });
-  }
-  private complete() {
-    try {
-      sessionStorage.removeItem(this.key());
-    } catch {}
-    this.submitting.set(false);
-    this.finished.emit(this.attempt()._id);
-  }
+  ngOnChanges() { this.load(); }
+  load() { this.vm.load(this.attempt()); }
+  go(index: number) { this.vm.go(index); }
+  save() { this.vm.save(); }
+  submit() { this.vm.submit(); }
 }
