@@ -97,5 +97,30 @@ completed question counts. No retry, authorization or scoring rules changed.
 
 Same-origin `/api/assessment-test`: catalog/history, start-test, attempt questions,
 answers PATCH, submit-test and attempt result. Generated producer DTO archive
-0.0.19 remains in vendor until registry publication. No endpoint/payload, package,
-federation, gateway or schema changes. No deployment or publication performed.
+0.0.20 remains in vendor until registry publication. Subjects are arbitrary section
+IDs with sectionTitle display snapshots. Federation and route URLs are preserved;
+no deployment or publication performed.
+
+## Document section subjects — 2026-10-09
+
+## Contract and rollout
+
+Definitions save `subject` as the document section `_id` and `sectionTitle` as
+its display title snapshot. New authoring reads document GET /navigation/sections
+(map wrapper); production /api/documents, development localhost:3007. New forms
+require selection. Existing subjects absent from the catalog retain their identity
+and remain editable; they are not silently reassigned by matching a title.
+
+Legacy persisted strings and attempts are unchanged. Missing display titles fall
+back to the old subject. Titles refresh from current document sections when the
+admin opens a definition, then save explicitly; used-definition protection still
+applies. No background title synchronization or bulk migration is performed.
+The service validates string shape, not section existence through a foreign DB.
+Duplicate levels, eligibility and starts compare IDs. Subjects with no definitions
+or attempts no longer create empty fixed-enum learner cards.
+
+Generated contract 0.0.20 is built locally and vendored in both consumers. Release
+owners deploy the service, publish/adopt the reviewed contract and release both
+consumers together before enabling new subjects. Verify real Admin creation,
+section load/error states and learner start/resume/history through hosted gateways.
+No publication, deployment or production data changes were performed here.

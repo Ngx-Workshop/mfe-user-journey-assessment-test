@@ -15,11 +15,11 @@ import { subjectInfo, TestSelection } from '../../models/assessment.models';
   <div class="assessment-catalog__subject-intro">
     <span
       class="assessment-catalog__subject-mark"
-      [style.--subject-color]="info[subject.subject].color">{{ info[subject.subject].mark }}</span>
+      [style.--subject-color]="info(subject).color">{{ info(subject).mark }}</span>
     <div>
       <span class="assessment-ui__eyebrow">EXPLORE YOUR NEXT LEVEL</span>
-      <h2>{{ info[subject.subject].name }} assessments</h2>
-      <p>{{ info[subject.subject].description }}</p>
+      <h2>{{ info(subject).name }} assessments</h2>
+      <p>{{ info(subject).description }}</p>
     </div>
   </div>
   <div class="assessment-catalog__subject-summary">

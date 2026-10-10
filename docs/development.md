@@ -45,3 +45,14 @@ Feature implementation lives in `src/app/features/assessment-test`, grouped into
 api, models, state, utils, styles, pages and presentation component folders.
 Tests live in the matching `testing/app` tree, outside production source. See the
 [testing guide](../testing/README.md) for full-suite/focused commands and discovery.
+
+## Document section subject verification — 2026-10-09
+
+- PASS: 19 ChromeHeadless tests, including rendered arbitrary Rust subject
+  discovery and start request with unchanged string ID/definition ID mapping.
+  Existing runner, result, save, routing and ownership-view regressions pass.
+- PASS: production build in /tmp/assessment-learner-section-subjects-build and
+  TypeScript test compilation. Generic subject display uses sectionTitle and
+  preserves legacy branded metadata as a fallback.
+
+See [subject handoff](../specs/003-document-section-subjects/handoff.md).

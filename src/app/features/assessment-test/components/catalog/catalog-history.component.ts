@@ -26,7 +26,7 @@ import { subjectInfo } from '../../models/assessment.models';
       <article class="assessment-catalog__proficiency">
         <span class="assessment-catalog__subject-label"><span
             class="assessment-ui__mini-mark"
-            [style.color]="info[subject.subject].color">{{ info[subject.subject].mark }}</span>{{ info[subject.subject].name }}</span>
+            [style.color]="info(subject).color">{{ info(subject).mark }}</span>{{ info(subject).name }}</span>
         <h3>
           {{
             subject.highestPassedLevel
@@ -56,7 +56,7 @@ import { subjectInfo } from '../../models/assessment.models';
       <button class="assessment-catalog__history-row" (click)="openAttempt.emit(attempt)">
         <span
           class="assessment-ui__mini-mark"
-          [style.color]="info[attempt.subject].color">{{ info[attempt.subject].mark }}</span><span class="assessment-ui__row-title"><strong>{{ attempt.testName }}</strong><span>{{ info[attempt.subject].name }} ·
+          [style.color]="info(attempt).color">{{ info(attempt).mark }}</span><span class="assessment-ui__row-title"><strong>{{ attempt.testName }}</strong><span>{{ info(attempt).name }} ·
             {{
               attempt.level
                 ? 'Level ' + attempt.level

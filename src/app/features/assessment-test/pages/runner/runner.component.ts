@@ -26,7 +26,7 @@ import { RunnerReviewComponent } from '../../components/runner/runner-review.com
   template: `
 <div class="assessment-runner__runner-heading">
   <div>
-    <span class="assessment-ui__eyebrow">{{ info[attempt().subject].name }} · LEVEL
+    <span class="assessment-ui__eyebrow">{{ info(attempt()).name }} · LEVEL
       {{ attempt().level }}</span>
     <h2>{{ attempt().testName }}</h2>
   </div>

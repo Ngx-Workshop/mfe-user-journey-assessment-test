@@ -4,10 +4,10 @@ import type {
 } from '@tmdjr/service-nestjs-assessment-test-contracts';
 
 export type Subject = LearnerSubjectDto['subject'];
-export const subjectInfo: Record<
-  Subject,
+const legacySubjectInfo: Partial<Record<
+  string,
   { name: string; mark: string; description: string; color: string }
-> = {
+>> = {
   ANGULAR: {
     name: 'Angular',
     mark: 'A',
@@ -30,6 +30,20 @@ export const subjectInfo: Record<
     color: 'var(--mat-sys-tertiary)',
   },
 };
+
+/** Titles are display snapshots; the string subject ID remains the identity. */
+export function subjectInfo(subject: { subject: string; sectionTitle?: string }) {
+  const legacy = Object.hasOwn(legacySubjectInfo, subject.subject)
+    ? legacySubjectInfo[subject.subject] : undefined;
+  const title = subject.sectionTitle?.trim();
+  const name = title && title !== subject.subject ? title : legacy?.name ?? (title || subject.subject);
+  return {
+    name,
+    mark: legacy?.mark ?? name.slice(0, 2),
+    description: legacy?.description ?? `Assessments for ${name}.`,
+    color: legacy?.color ?? 'var(--mat-sys-primary)',
+  };
+}
 
 export type AssessmentView = 'overview' | 'subject' | 'history' | 'attempt' | 'result';
 export interface TestSelection { subject: Subject; test: LearnerTestDto; }

@@ -13,7 +13,7 @@ import { Subject, subjectInfo } from '../../models/assessment.models';
 @let result = data();
   <section class="assessment-result__result-hero">
     <div>
-      <span class="assessment-ui__eyebrow">{{ info[result.attempt.subject].name }} · LEVEL
+      <span class="assessment-ui__eyebrow">{{ info(result.attempt).name }} · LEVEL
         {{ result.attempt.level }} · ASSESSMENT COMPLETE</span>
       <h2>
         {{

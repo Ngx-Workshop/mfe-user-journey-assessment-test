@@ -25,7 +25,7 @@ describe('Historical assessment result', () => {
       .expectOne('/api/assessment-test/attempts/history-id/result')
       .flush({
         attempt: {
-          subject: 'ANGULAR',
+          subject: 'ANGULAR', sectionTitle: 'Angular',
           level: 1,
           score: 1,
           questionCount: 2,

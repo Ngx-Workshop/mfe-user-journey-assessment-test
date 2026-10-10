@@ -28,11 +28,11 @@ import { Subject, subjectInfo } from '../../models/assessment.models';
     @for (subject of subjects(); track subject.subject) {
       <button
         class="assessment-catalog__subject-card"
-        [style.--subject-color]="info[subject.subject].color"
+        [style.--subject-color]="info(subject).color"
         (click)="openSubject.emit(subject.subject)">
         <div class="assessment-catalog__card-top">
           <span class="assessment-catalog__subject-mark">{{
-            info[subject.subject].mark
+            info(subject).mark
           }}</span><span
             class="assessment-ui__badge"
             [class.assessment-ui__badge--active]="subject.tests.some(isInProgress)">{{
@@ -45,8 +45,8 @@ import { Subject, subjectInfo } from '../../models/assessment.models';
                     : 'Coming soon'
             }}</span>
         </div>
-        <h3>{{ info[subject.subject].name }}</h3>
-        <p>{{ info[subject.subject].description }}</p>
+        <h3>{{ info(subject).name }}</h3>
+        <p>{{ info(subject).description }}</p>
         <div class="assessment-catalog__card-progress">
           <div>
             <span>{{ subject.completedCount }} of

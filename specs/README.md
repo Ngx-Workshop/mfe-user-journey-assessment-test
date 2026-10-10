@@ -11,3 +11,5 @@ remain available for contract decisions and verification limits.
 
 The [readiness review](../docs/assessment-readiness.md) is an earlier source snapshot.
 Current architecture and implementation are described in [architecture](../docs/architecture.md).
+
+- [003 Document section subjects](003-document-section-subjects/spec.md) — Implemented; hosted integration pending.

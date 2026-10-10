@@ -9,7 +9,7 @@ import { RunnerComponent } from '../../../../../../src/app/features/assessment-t
 
 const attempt = {
   _id: 'owned-attempt',
-  subject: 'ANGULAR',
+  subject: 'ANGULAR', sectionTitle: 'Angular',
   level: 1,
   testName: 'Foundations',
   questionCount: 2,

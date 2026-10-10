@@ -15,7 +15,7 @@ import { App } from '../../src/app/app';
 
 const subjects = [
   {
-    subject: 'ANGULAR',
+    subject: 'ANGULAR', sectionTitle: 'Angular',
     completedCount: 0,
     passedCount: 0,
     highestPassedLevel: 0,
@@ -32,7 +32,7 @@ const subjects = [
     ],
   },
   {
-    subject: 'NESTJS',
+    subject: 'NESTJS', sectionTitle: 'NestJS',
     completedCount: 0,
     passedCount: 0,
     highestPassedLevel: 0,
@@ -40,7 +40,7 @@ const subjects = [
     tests: [],
   },
   {
-    subject: 'RXJS',
+    subject: 'RXJS', sectionTitle: 'RxJS',
     completedCount: 0,
     passedCount: 0,
     highestPassedLevel: 0,
@@ -106,7 +106,7 @@ describe('Learner journey', () => {
     });
     request.flush({
       _id: 'attempt-1',
-      subject: 'ANGULAR',
+      subject: 'ANGULAR', sectionTitle: 'Angular',
       completed: false,
       lastUpdated: new Date().toISOString(),
     });
@@ -124,6 +124,24 @@ describe('Learner journey', () => {
       .expectOne('/api/assessment-test/learner/catalog')
       .flush(subjects);
     http.expectOne('/api/assessment-test/learner/history').flush([]);
+  });
+  it('renders a dynamic section title and starts using its section ID', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const rust = { ...subjects[0], subject: '670000000000000000000001', sectionTitle: 'Rust' };
+    http.expectOne('/api/assessment-test/learner/catalog').flush([rust]);
+    http.expectOne('/api/assessment-test/learner/history').flush([]);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Rust');
+    expect(fixture.nativeElement.querySelectorAll('.assessment-catalog__subject-card').length).toBe(1);
+    params.next(convertToParamMap({ view: 'subject', subject: rust.subject }));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Rust assessments');
+    const start = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('button')).find((button) => button.textContent?.includes('Start test'))!;
+    start.click();
+    const request = http.expectOne('/api/assessment-test/start-test');
+    expect(request.request.body).toEqual({ subject: rust.subject, assessmentTestId: 'definition-1' });
+    request.flush({}, { status: 409, statusText: 'Conflict' });
   });
   it('retains recoverable request errors and supports retry', () => {
     const fixture = TestBed.createComponent(App);

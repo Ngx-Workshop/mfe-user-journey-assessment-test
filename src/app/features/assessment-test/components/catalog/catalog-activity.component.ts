@@ -49,7 +49,7 @@ import { subjectInfo } from '../../models/assessment.models';
           (click)="openAttempt.emit(attempt)">
           <span
             class="assessment-ui__mini-mark"
-            [style.color]="info[attempt.subject].color">{{ info[attempt.subject].mark }}</span><span class="assessment-ui__row-title"><strong>{{ attempt.testName }}</strong><span>{{ attempt.lastUpdated | date: 'mediumDate' }} ·
+            [style.color]="info(attempt).color">{{ info(attempt).mark }}</span><span class="assessment-ui__row-title"><strong>{{ attempt.testName }}</strong><span>{{ attempt.lastUpdated | date: 'mediumDate' }} ·
               {{
                 attempt.completed
                   ? attempt.passed
