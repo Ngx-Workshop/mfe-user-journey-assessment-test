@@ -30,6 +30,9 @@ All links above resolve within this checkout. Do not assume a sibling repository
 - Treat `service-assessment-test` as the assessment data/scoring owner and
   `mfe-user-journey-admin-assessment-test` as the separate authoring owner.
   Do not turn the learner remote into an admin editor.
+- Keep assessment implementation under `src/app/features/assessment-test`, grouped
+  into api, models, state, utils, styles, pages and components by responsibility.
+  Keep specs in `testing/app` mirroring `src/app`; never import tests from runtime.
 - Use MVVM: stateless AssessmentApi owns HTTP; root AssessmentStore owns shared
   server state and data orchestration; scoped view models own route/form/view state.
   Orchestration components compose focused input/output presentation components.

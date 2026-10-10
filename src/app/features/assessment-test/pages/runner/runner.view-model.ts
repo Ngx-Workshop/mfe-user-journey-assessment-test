@@ -17,9 +17,9 @@ import type {
   AttemptQuestionsDto,
   LearnerAttemptDto,
 } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { AssessmentStore, AnswerSave } from './assessment.store';
-import { apiError } from './assessment-error';
-import { DraftStorage } from './draft-storage.service';
+import { AssessmentStore, AnswerSave } from '../../state/assessment.store';
+import { apiError } from '../../utils/assessment-error';
+import { DraftStorage } from '../../state/draft-storage.service';
 
 /** A runner session owns unsaved choices and form state, never the HTTP client. */
 @Injectable()

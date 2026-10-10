@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import type { LearnerAttemptDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { subjectInfo } from './assessment.models';
+import { subjectInfo } from '../../models/assessment.models';
 
 @Component({
   selector: 'ngx-catalog-activity',
@@ -69,7 +69,7 @@ import { subjectInfo } from './assessment.models';
   </div>
   `,
   styles: [`
-    @use './shared' as ui;
+    @use '../../styles/shared' as ui;
     @include ui.foundation(('eyebrow', 'mini-mark', 'row-title', 'section-heading',));
 .assessment-catalog__lower-grid { margin-top: 35px; display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
 .assessment-catalog__how-it-works, .assessment-catalog__recent { border-radius: 20px; padding: 27px; }

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Subject } from 'rxjs';
-import { AnswerSave, AssessmentStore } from './assessment.store';
+import { AnswerSave, AssessmentStore } from '../../../../../src/app/features/assessment-test/state/assessment.store';
 
 const base = '/api/assessment-test';
 describe('Shared assessment data orchestration', () => {

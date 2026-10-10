@@ -38,3 +38,10 @@ publication is part of the refactor.
 The 001 handoff records synthetic local Mongo/Nest preview walkthroughs at 1366 px
 and 390 px, including persistence and submission. That earlier evidence is not a
 new integration test of this refactor. Preserve this distinction in future handoffs.
+
+## Test and feature organization
+
+Feature implementation lives in `src/app/features/assessment-test`, grouped into
+api, models, state, utils, styles, pages and presentation component folders.
+Tests live in the matching `testing/app` tree, outside production source. See the
+[testing guide](../testing/README.md) for full-suite/focused commands and discovery.

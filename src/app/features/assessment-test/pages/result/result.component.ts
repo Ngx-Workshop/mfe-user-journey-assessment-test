@@ -8,10 +8,10 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { Subject } from './assessment.models';
+import { Subject } from '../../models/assessment.models';
 import { ResultViewModel } from './result.view-model';
-import { ResultSummaryComponent } from './result-summary.component';
-import { ResultFeedbackComponent } from './result-feedback.component';
+import { ResultSummaryComponent } from '../../components/result/result-summary.component';
+import { ResultFeedbackComponent } from '../../components/result/result-feedback.component';
 
 @Component({
   selector: 'ngx-assessment-result',
@@ -37,7 +37,7 @@ import { ResultFeedbackComponent } from './result-feedback.component';
   <ngx-result-feedback [data]="result" />
 }
   `,
-  styles: [`@use './shared' as ui; @include ui.foundation(('empty',));`],
+  styles: [`@use '../../styles/shared' as ui; @include ui.foundation(('empty',));`],
 })
 export class ResultComponent implements OnChanges {
   readonly vm = inject(ResultViewModel);

@@ -5,7 +5,7 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
-import { ResultComponent } from './result.component';
+import { ResultComponent } from '../../../../../../src/app/features/assessment-test/pages/result/result.component';
 
 describe('Historical assessment result', () => {
   it('shows stored scores, dates, selected answers and feedback', () => {

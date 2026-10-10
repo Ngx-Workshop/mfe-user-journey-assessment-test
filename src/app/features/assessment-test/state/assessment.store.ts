@@ -4,8 +4,8 @@ import { EMPTY, Observable, Subject, catchError, concatMap, defer, exhaustMap,
   finalize, forkJoin, map, of, switchMap, tap, throwError } from 'rxjs';
 import type { LearnerAttemptDto, LearnerSubjectDto, StartTestDto } from
   '@tmdjr/service-nestjs-assessment-test-contracts';
-import { AssessmentApi } from './assessment-api.service';
-import { apiError } from './assessment-error';
+import { AssessmentApi } from '../api/assessment-api.service';
+import { apiError } from '../utils/assessment-error';
 
 export interface AnswerSave { id: string; answers: string[]; }
 export type SaveOutcome = { error: string };

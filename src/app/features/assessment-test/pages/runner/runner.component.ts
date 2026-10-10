@@ -12,11 +12,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import type { LearnerAttemptDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { subjectInfo } from './assessment.models';
+import { subjectInfo } from '../../models/assessment.models';
 import { RunnerViewModel } from './runner.view-model';
-import { RunnerProgressComponent } from './runner-progress.component';
-import { RunnerQuestionComponent } from './runner-question.component';
-import { RunnerReviewComponent } from './runner-review.component';
+import { RunnerProgressComponent } from '../../components/runner/runner-progress.component';
+import { RunnerQuestionComponent } from '../../components/runner/runner-question.component';
+import { RunnerReviewComponent } from '../../components/runner/runner-review.component';
 
 @Component({
   selector: 'ngx-assessment-runner',
@@ -72,7 +72,7 @@ import { RunnerReviewComponent } from './runner-review.component';
   </div>
 }
   `,
-  styles: [`@use './shared' as ui; @include ui.foundation(('eyebrow',));
+  styles: [`@use '../../styles/shared' as ui; @include ui.foundation(('eyebrow',));
 .assessment-runner__runner-heading {
     display: flex; justify-content: space-between; gap: 20px; align-items: center; margin-bottom: 30px;
   }

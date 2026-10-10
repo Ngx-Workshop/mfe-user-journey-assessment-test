@@ -62,3 +62,13 @@ remain at or below 230 lines including inline presentation; shared foundational 
 is the explicitly permitted mixin. No framework/dependency upgrade or external
 contract change. Synthetic browser checks verify layout; the beta host retained
 an earlier bundle, documented separately from local acceptance.
+
+## Folder organization follow-up — 2026-10-09
+
+Mirror the document editor's feature/testing convention without changing behavior.
+Move implementation to `src/app/features/assessment-test` with api/models/state/
+utils/styles, pages grouped by journey/catalog/runner/result, and presentation
+components grouped by journey/catalog/runner/result. Keep public App/Routes at the
+app root. Move specs to matching `testing/app` paths, rewrite relative TypeScript
+and inline Sass imports, and align Karma/TypeScript test discovery. Verify the
+existing 18 tests, production build, folder/import audit and whitespace checks.

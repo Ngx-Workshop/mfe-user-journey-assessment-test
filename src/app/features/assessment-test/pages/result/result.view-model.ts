@@ -2,8 +2,8 @@ import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject, catchError, defer, finalize, switchMap, tap } from 'rxjs';
 import type { LearnerResultDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { AssessmentStore } from './assessment.store';
-import { apiError } from './assessment-error';
+import { AssessmentStore } from '../../state/assessment.store';
+import { apiError } from '../../utils/assessment-error';
 
 @Injectable()
 export class ResultViewModel {

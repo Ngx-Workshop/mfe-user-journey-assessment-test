@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import type { LearnerResultDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { subjectInfo } from './assessment.models';
+import { subjectInfo } from '../../models/assessment.models';
 
 @Component({
   selector: 'ngx-result-feedback',
@@ -57,7 +57,7 @@ import { subjectInfo } from './assessment.models';
   </div>
   `,
   styles: [`
-    @use './shared' as ui;
+    @use '../../styles/shared' as ui;
     @include ui.foundation(('badge', 'eyebrow', 'section-heading',));
 .assessment-result__feedback-list { display: grid; gap: 18px; }
 .assessment-result__feedback {

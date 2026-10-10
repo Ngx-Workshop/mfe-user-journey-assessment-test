@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import type { LearnerResultDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { Subject, subjectInfo } from './assessment.models';
+import { Subject, subjectInfo } from '../../models/assessment.models';
 
 @Component({
   selector: 'ngx-result-summary',
@@ -56,7 +56,7 @@ import { Subject, subjectInfo } from './assessment.models';
   </div>
   `,
   styles: [`
-    @use './shared' as ui;
+    @use '../../styles/shared' as ui;
     @include ui.foundation(('badge', 'eyebrow',));
 .assessment-result__result-hero {
     display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 50px; align-items: center;

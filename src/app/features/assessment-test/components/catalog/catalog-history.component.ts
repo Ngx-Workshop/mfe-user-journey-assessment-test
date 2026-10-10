@@ -6,7 +6,7 @@ import type {
   LearnerAttemptDto,
   LearnerSubjectDto,
 } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { subjectInfo } from './assessment.models';
+import { subjectInfo } from '../../models/assessment.models';
 
 @Component({
   selector: 'ngx-catalog-history',
@@ -80,7 +80,7 @@ import { subjectInfo } from './assessment.models';
   </div>
   `,
   styles: [`
-    @use './shared' as ui;
+    @use '../../styles/shared' as ui;
     @include ui.foundation(('badge', 'empty', 'explanation', 'eyebrow', 'mini-mark', 'row-title', 'section-heading',));
 .assessment-catalog__count { font-size: 12px; color: var(--muted); white-space: nowrap; }
 .assessment-catalog__proficiency-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }

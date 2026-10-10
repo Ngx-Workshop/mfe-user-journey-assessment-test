@@ -1,6 +1,6 @@
 # Constitution — Learner assessment journey
 
-Version: 1.1.0 · Adopted: 2026-09-30 · Updated: 2026-10-09
+Version: 1.1.1 · Adopted: 2026-09-30 · Updated: 2026-10-09
 
 These are durable requirements. Current implementation and verification evidence
 live in the architecture/development guides and feature handoffs.
@@ -29,6 +29,12 @@ orchestration; it never depends on components, forms or Router. Scoped view mode
 own route/view/form state and call the store. Orchestration components manage
 composition/lifecycle; presentation components receive inputs and emit user intent.
 Nested orchestration is allowed when it reflects distinct responsibilities.
+
+Keep runtime feature code under `src/app/features/assessment-test`, grouped by
+responsibility into api, models, state, utils, styles, pages and components.
+Group page/presentation folders by journey, catalog, runner and result. Keep tests
+outside production source in `testing/app`, mirroring their application folders.
+Public federation entry points remain at `src/app`.
 
 Use switchMap for replaceable reads, concatMap for ordered saves and exhaustMap
 for duplicate-sensitive commands. Bind subscriptions/listeners to their lifetime.

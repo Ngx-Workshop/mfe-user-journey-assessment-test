@@ -2,8 +2,8 @@ import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { LearnerAttemptDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { AssessmentStore } from './assessment/assessment.store';
-import { AssessmentView, Subject, TestSelection } from './assessment/assessment.models';
+import { AssessmentStore } from '../../state/assessment.store';
+import { AssessmentView, Subject, TestSelection } from '../../models/assessment.models';
 
 @Injectable()
 export class JourneyViewModel {

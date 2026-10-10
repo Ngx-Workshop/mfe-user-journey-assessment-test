@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import type { AttemptQuestionsDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { subjectInfo } from './assessment.models';
+import { subjectInfo } from '../../models/assessment.models';
 
 @Component({
   selector: 'ngx-runner-progress',
@@ -75,7 +75,7 @@ import { subjectInfo } from './assessment.models';
     </aside>
   `,
   styles: [`
-    @use './shared' as ui;
+    @use '../../styles/shared' as ui;
     @include ui.foundation(('progress-track',));
 .assessment-runner__outline {
     min-width: 0; border: 1px solid var(--line); border-radius: 18px; padding: 24px 16px;

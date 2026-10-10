@@ -12,3 +12,6 @@ Use Node 22 and `npm ci`. `npm run dev:bundle` runs the development watcher and 
 For a disposable integrated review, build with `npm run build -- --output-path dist/learner-verification`, then run `npm run preview:learner` in the companion service checkout. Open http://localhost:4203/. This uses synthetic records and a regular learner identity in a unique local database, with the actual frontend/service. See [development](docs/development.md) for details and limitations.
 
 The generated contract package 0.0.19 is vendored until its registry release. Producer service/gateway must be updated before releasing the learner. Federation identity, exposures, public overview route and deployment configuration remain compatible. No deployment or registry publication was performed in this implementation.
+
+Implementation is grouped under `src/app/features/assessment-test`; test files
+mirror application folders under `testing/app`. See [testing](testing/README.md).

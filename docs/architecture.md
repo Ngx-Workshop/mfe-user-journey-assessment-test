@@ -8,15 +8,51 @@ reviews/submits attempts and displays historical results/proficiency.
 
 | Layer | Source | Responsibility |
 | --- | --- | --- |
-| Model/transport | `src/app/assessment/assessment-api.service.ts` | Stateless HttpClient requests using generated DTOs; no UI metadata, state or orchestration |
-| Shared state | `src/app/assessment/assessment.store.ts` | Root singleton catalog/history and loading/error state; superseded refresh cancellation, duplicate start guard, captured-ID ordered saves and completed-result submit reconciliation |
-| Journey VM | `src/app/journey.view-model.ts` | Scoped route query state, derived selection/active attempt, store commands and navigation |
-| Runner VM | `src/app/assessment/runner.view-model.ts` | Scoped answer/form/review state, input session cancellation, persistence status, submission guard and teardown |
-| Result VM | `src/app/assessment/result.view-model.ts` | Scoped result view/error state and latest-ID/retry loading |
-| Browser recovery | `src/app/assessment/draft-storage.service.ts` | Stateless browser draft adapter with owned question/choice validation, timestamp checks and optional-storage fallback |
-| Orchestration | `src/app/app.ts`, `assessment/runner.component.ts`, `assessment/result.component.ts` | VM lifecycle, composition, outputs and view focus; no API injection |
-| Presentation | `assessment/catalog*.component.ts`, `runner-{progress,question,review}.component.ts`, `result-{summary,feedback}.component.ts`, `journey-hero.component.ts` | Inputs/outputs, inline HTML/SCSS and BEM classes; no HTTP or singleton mutation |
-| Style foundations | `assessment/_shared.scss`, `src/styles.scss` | Reusable foundation mixin emitting only requested BEM elements; standalone theme |
+| Model/transport | `src/app/features/assessment-test/api/assessment-api.service.ts` | Stateless HttpClient requests using generated DTOs; no UI metadata, state or orchestration |
+| Shared state | `src/app/features/assessment-test/state/assessment.store.ts` | Root singleton catalog/history and loading/error state; superseded refresh cancellation, duplicate start guard, captured-ID ordered saves and completed-result submit reconciliation |
+| Journey VM | `src/app/features/assessment-test/pages/journey/journey.view-model.ts` | Scoped route query state, derived selection/active attempt, store commands and navigation |
+| Runner VM | `src/app/features/assessment-test/pages/runner/runner.view-model.ts` | Scoped answer/form/review state, input session cancellation, persistence status, submission guard and teardown |
+| Result VM | `src/app/features/assessment-test/pages/result/result.view-model.ts` | Scoped result view/error state and latest-ID/retry loading |
+| Browser recovery | `src/app/features/assessment-test/state/draft-storage.service.ts` | Stateless browser draft adapter with owned question/choice validation, timestamp checks and optional-storage fallback |
+| Orchestration | `src/app/app.ts`, `src/app/features/assessment-test/pages/runner/runner.component.ts`, `src/app/features/assessment-test/pages/result/result.component.ts` | VM lifecycle, composition, outputs and view focus; no API injection |
+| Presentation | `src/app/features/assessment-test/components/{catalog,runner,result,journey}/`, `pages/catalog/catalog.component.ts` | Inputs/outputs, inline HTML/SCSS and BEM classes; no HTTP or singleton mutation |
+| Style foundations | `src/app/features/assessment-test/styles/_shared.scss`, `src/styles.scss` | Reusable foundation mixin emitting only requested BEM elements; standalone theme |
+
+## Feature and test folders
+
+The feature uses the same responsibility-based structure as the document editor MFE:
+
+```text
+src/app/
+  app.ts                     # public federation composition entry point
+  app.config.ts
+  app.routes.ts
+  features/assessment-test/
+    api/                     # stateless HTTP client
+    models/                  # DTO-derived UI models and subject metadata
+    state/                   # singleton orchestration and draft adapter
+    utils/                   # error mapping
+    styles/                  # shared SCSS foundation
+    pages/
+      journey/               # journey view model used by App
+      catalog/               # catalog composition
+      runner/                # runner orchestration and view model
+      result/                # result orchestration and view model
+    components/
+      journey/               # hero
+      catalog/               # overview, subject, history and activity
+      runner/                # progress, question and review
+      result/                # summary and feedback
+testing/app/
+  app.spec.ts
+  features/assessment-test/
+    state/                   # store regression tests
+    pages/runner/            # runner behavior tests
+    pages/result/            # result behavior tests
+```
+
+Tests mirror application folders under `testing/app` and import production code
+from `src/app`. See [testing guide](../testing/README.md) for discovery configuration.
 
 Data flows from stateless API → singleton store → scoped VM → view. User intent
 flows through component outputs → VM → store → API. Catalog is a presentation

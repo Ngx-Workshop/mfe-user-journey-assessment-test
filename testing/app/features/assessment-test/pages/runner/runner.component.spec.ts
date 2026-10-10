@@ -5,7 +5,7 @@ import {
   provideHttpClientTesting,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { RunnerComponent } from './runner.component';
+import { RunnerComponent } from '../../../../../../src/app/features/assessment-test/pages/runner/runner.component';
 
 const attempt = {
   _id: 'owned-attempt',

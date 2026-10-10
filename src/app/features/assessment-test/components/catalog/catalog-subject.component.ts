@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import type { LearnerSubjectDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { subjectInfo, TestSelection } from './assessment.models';
+import { subjectInfo, TestSelection } from '../../models/assessment.models';
 
 @Component({
   selector: 'ngx-catalog-subject',
@@ -97,7 +97,7 @@ import { subjectInfo, TestSelection } from './assessment.models';
   </div>
   `,
   styles: [`
-    @use './shared' as ui;
+    @use '../../styles/shared' as ui;
     @include ui.foundation(('badge', 'empty', 'explanation', 'eyebrow', 'row-title',));
 .assessment-catalog__subject-mark {
     display: grid; place-items: center; width: 52px; height: 58px; color: var(--subject-color);

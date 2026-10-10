@@ -6,7 +6,7 @@ import type {
   LearnerSubjectDto,
   LearnerTestDto,
 } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { Subject, subjectInfo } from './assessment.models';
+import { Subject, subjectInfo } from '../../models/assessment.models';
 
 @Component({
   selector: 'ngx-catalog-overview',
@@ -74,7 +74,7 @@ import { Subject, subjectInfo } from './assessment.models';
   </div>
   `,
   styles: [`
-    @use './shared' as ui;
+    @use '../../styles/shared' as ui;
     @include ui.foundation(('badge', 'eyebrow', 'progress-track', 'section-heading',));
 .assessment-catalog__count { font-size: 12px; color: var(--muted); white-space: nowrap; }
 .assessment-catalog__subject-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }

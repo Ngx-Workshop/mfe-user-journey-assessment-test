@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import type { AttemptQuestionsDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { subjectInfo } from './assessment.models';
+import { subjectInfo } from '../../models/assessment.models';
 
 @Component({
   selector: 'ngx-runner-review',
@@ -51,7 +51,7 @@ import { subjectInfo } from './assessment.models';
         </div>
   `,
   styles: [`
-    @use './shared' as ui;
+    @use '../../styles/shared' as ui;
     @include ui.foundation(('eyebrow',));
 .assessment-runner__number {
     display: grid; place-items: center; width: 23px; height: 23px; border-radius: 7px;

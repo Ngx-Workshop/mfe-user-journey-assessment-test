@@ -68,3 +68,23 @@ separate from completed local refactor acceptance.
 No local implementation tasks remain. AGENTS.md, constitution, workflow/templates,
 architecture, development, adoption, README and feature index reflect the delivered
 structure. Historical readiness/001 feature records are retained as earlier evidence.
+
+## Folder organization follow-up — 2026-10-09
+
+Completed the requested document-editor folder convention. Runtime feature code is
+now under `src/app/features/assessment-test`, grouped into api, models, state, utils,
+styles, pages/{journey,catalog,runner,result}, and components/{journey,catalog,runner,result}.
+Public App/config/Routes remain at src/app. All four specs moved to mirrored
+`testing/app` paths; the old flat src/app/assessment directory is removed.
+
+Updated TypeScript relative imports, inline Sass mixin paths, Karma's
+`../testing/**/*.spec.ts` discovery, test compiler includes and app test exclusions.
+Added testing/README.md and refreshed current architecture/development/agent docs.
+
+Verification repeated after moves: 18 ChromeHeadless tests pass; production build
+into dist/learner-verification passes without Angular/style-budget warnings;
+`npx tsc --noEmit --noUnusedLocals --noUnusedParameters -p tsconfig.app.json` passes.
+Import audit covers 30 TypeScript files and all Sass references. Comparing moved
+files to HEAD confirms only import/mixin references changed, retaining behavior and
+coverage. No specs remain in src. Forty-six local documentation links resolve;
+`git diff --check` passes. T007/T008 are complete; no local work remains.

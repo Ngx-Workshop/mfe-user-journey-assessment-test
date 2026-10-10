@@ -3,11 +3,11 @@ import type {
   LearnerAttemptDto,
   LearnerSubjectDto,
 } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { Subject, TestSelection } from './assessment.models';
-import { CatalogOverviewComponent } from './catalog-overview.component';
-import { CatalogActivityComponent } from './catalog-activity.component';
-import { CatalogSubjectComponent } from './catalog-subject.component';
-import { CatalogHistoryComponent } from './catalog-history.component';
+import { Subject, TestSelection } from '../../models/assessment.models';
+import { CatalogOverviewComponent } from '../../components/catalog/catalog-overview.component';
+import { CatalogActivityComponent } from '../../components/catalog/catalog-activity.component';
+import { CatalogSubjectComponent } from '../../components/catalog/catalog-subject.component';
+import { CatalogHistoryComponent } from '../../components/catalog/catalog-history.component';
 
 @Component({
   selector: 'ngx-learner-catalog',

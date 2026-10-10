@@ -12,12 +12,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LearnerAttemptDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { AssessmentView, Subject, TestSelection } from './assessment/assessment.models';
-import { JourneyViewModel } from './journey.view-model';
-import { JourneyHeroComponent } from './assessment/journey-hero.component';
-import { CatalogComponent } from './assessment/catalog.component';
-import { RunnerComponent } from './assessment/runner.component';
-import { ResultComponent } from './assessment/result.component';
+import { AssessmentView, Subject, TestSelection } from './features/assessment-test/models/assessment.models';
+import { JourneyViewModel } from './features/assessment-test/pages/journey/journey.view-model';
+import { JourneyHeroComponent } from './features/assessment-test/components/journey/journey-hero.component';
+import { CatalogComponent } from './features/assessment-test/pages/catalog/catalog.component';
+import { RunnerComponent } from './features/assessment-test/pages/runner/runner.component';
+import { ResultComponent } from './features/assessment-test/pages/result/result.component';
 
 @Component({
   selector: 'ngx-seed-mfe',
