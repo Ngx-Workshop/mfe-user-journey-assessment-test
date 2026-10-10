@@ -9,3 +9,6 @@ Single journey ownership, authenticated APIs, typed contracts, zoneless state, p
 
 ## Verification
 Run service unit and disposable-Mongo HTTP suites; add scenarios for safe catalog, exact eligibility, draft validation/ownership/refresh, completed-only feedback and proficiency. Build regenerated contracts. Frontend HTTP/component tests verify navigation, restored answers, review/submission, errors and history. Build production separately from the existing watch output, inspect desktop/mobile and real host where accessible. Live gateway/auth checks remain distinct from mocks.
+
+## Material theme integration
+Use inherited `--mat-sys-*` semantic tokens for all custom styles and subject accents. Pair container colors with their matching on-container text. Remove fixed button/radio overrides. Keep standalone theme generation in global preview styles only, with themed body foreground/background; preserve transparent journey background in the remote. Verify a different palette in light and dark mode using temporary built-output fixtures.

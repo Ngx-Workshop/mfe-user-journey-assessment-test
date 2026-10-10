@@ -1,7 +1,7 @@
 @use 'shared';
 .count {
   font-size: 12px;
-  color: #768a85;
+  color: var(--muted);
   white-space: nowrap;
 }
 .subject-grid,
@@ -11,8 +11,8 @@
   gap: 20px;
 }
 .subject-card {
-  border: 1px solid #dce7e3;
-  background: #fff;
+  border: 1px solid var(--line);
+  background: var(--panel);
   border-radius: 20px;
   padding: 25px;
   text-align: left;
@@ -24,8 +24,8 @@
 }
 .subject-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 26px #183d3610;
-  border-color: #8ab7aa;
+  box-shadow: 0 12px 26px color-mix(in srgb, var(--mat-sys-shadow) 12%, transparent);
+  border-color: var(--accent);
 }
 .card-top {
   display: flex;
@@ -40,7 +40,7 @@
   width: 52px;
   height: 58px;
   color: var(--subject-color);
-  background: color-mix(in srgb, var(--subject-color) 9%, white);
+  background: color-mix(in srgb, var(--subject-color) 9%, var(--panel));
   font-size: 32px;
   font-weight: 800;
   border-radius: 16px;
@@ -62,14 +62,14 @@
   gap: 8px;
   margin-bottom: 12px;
   font-size: 11px;
-  color: #6d817b;
+  color: var(--muted);
 }
 .card-progress strong {
   font-size: 12px;
-  color: #355f54;
+  color: var(--accent);
 }
 .card-footer {
-  border-top: 1px solid #edf1ef;
+  border-top: 1px solid var(--line);
   padding-top: 18px;
   display: flex;
   justify-content: space-between;
@@ -89,7 +89,7 @@
   padding: 27px;
 }
 .how-it-works {
-  background: #eaf2ee;
+  background: var(--soft);
 }
 .how-it-works h3 {
   margin-top: 15px;
@@ -107,7 +107,7 @@ li {
 }
 li > span {
   font-size: 11px;
-  color: #609482;
+  color: var(--accent);
   padding-top: 4px;
 }
 li strong {
@@ -118,8 +118,8 @@ li p {
   margin-top: 5px;
 }
 .recent {
-  background: #fff;
-  border: 1px solid #dce7e3;
+  background: var(--panel);
+  border: 1px solid var(--line);
 }
 .recent .section-heading {
   margin-bottom: 15px;
@@ -129,25 +129,25 @@ li p {
   gap: 12px;
   align-items: center;
   border: 0;
-  border-top: 1px solid #eef2ef;
+  border-top: 1px solid var(--line);
   padding: 17px 0;
   width: 100%;
   background: transparent;
   color: inherit;
 }
 .recent-row:hover {
-  color: #158473;
+  color: var(--accent);
 }
 .recent-empty {
   padding: 30px 0;
   text-align: center;
-  color: #80938b;
+  color: var(--muted);
 }
 .recent-empty mat-icon {
   height: 38px;
   width: 38px;
   font-size: 38px;
-  color: #b5c9bd;
+  color: var(--muted);
 }
 .recent-empty p {
   margin: 15px 0 8px;
@@ -170,12 +170,12 @@ li p {
   gap: 35px;
   padding: 22px 0;
   margin-top: 25px;
-  border-bottom: 1px solid #dce7e3;
+  border-bottom: 1px solid var(--line);
   font-size: 12px;
-  color: #73867e;
+  color: var(--muted);
 }
 .subject-summary strong {
-  color: #27584b;
+  color: var(--accent);
   display: block;
   font-size: 22px;
   margin-bottom: 6px;
@@ -189,13 +189,13 @@ li p {
   gap: 22px;
   align-items: center;
   padding: 25px;
-  border: 1px solid #dce7e3;
+  border: 1px solid var(--line);
   border-radius: 16px;
-  background: white;
+  background: var(--panel);
 }
 .level {
   font-size: 28px;
-  color: #79a293;
+  color: var(--accent);
   font-weight: 600;
   width: 45px;
   flex-shrink: 0;
@@ -206,7 +206,7 @@ li p {
 .test-row p,
 .test-row small {
   font-size: 12px;
-  color: #73877d;
+  color: var(--muted);
 }
 .test-actions {
   display: flex;
@@ -218,16 +218,16 @@ li p {
   font-size: 12px;
 }
 .locked {
-  background: #f3f6f3;
+  background: var(--soft);
 }
 .locked .level {
-  color: #abbcb4;
+  color: var(--muted);
 }
 .proficiency {
   padding: 22px;
-  border: 1px solid #dce7e3;
+  border: 1px solid var(--line);
   border-radius: 18px;
-  background: white;
+  background: var(--panel);
 }
 .subject-label {
   display: flex;
@@ -248,12 +248,12 @@ li p {
   justify-content: space-between;
   margin-top: 25px;
   padding-top: 16px;
-  border-top: 1px solid #eef1ed;
+  border-top: 1px solid var(--line);
   font-size: 12px;
-  color: #70857b;
+  color: var(--muted);
 }
 .accuracy strong {
-  color: #2e6e5c;
+  color: var(--accent);
 }
 .history-list {
   display: grid;
@@ -263,14 +263,14 @@ li p {
   display: flex;
   align-items: center;
   gap: 18px;
-  background: white;
-  border: 1px solid #dce7e3;
+  background: var(--panel);
+  border: 1px solid var(--line);
   padding: 21px;
   border-radius: 14px;
   color: inherit;
 }
 .history-row:hover {
-  border-color: #83ac9d;
+  border-color: var(--accent);
 }
 .score {
   font-size: 20px;

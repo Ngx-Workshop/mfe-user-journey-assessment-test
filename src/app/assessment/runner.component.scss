@@ -20,17 +20,17 @@
 }
 .outline {
   min-width: 0;
-  border: 1px solid #dce7e3;
+  border: 1px solid var(--line);
   border-radius: 18px;
   padding: 24px 16px;
-  background: #fff;
+  background: var(--panel);
 }
 .outline-heading {
   display: flex;
   justify-content: space-between;
   font-size: 12px;
   margin: 0 4px 15px;
-  color: #648176;
+  color: var(--muted);
 }
 .outline .progress-track {
   margin: 0 4px 20px;
@@ -47,7 +47,7 @@ nav button {
   background: transparent;
   border: 0;
   border-radius: 10px;
-  color: #6b8177;
+  color: var(--muted);
   font-size: 12px;
   text-align: left;
 }
@@ -58,12 +58,12 @@ nav button > mat-icon:last-child {
   width: 16px;
 }
 nav button.selected {
-  background: #eaf4ed;
-  color: #265f4c;
+  background: var(--secondary-soft);
+  color: var(--on-secondary-soft);
   font-weight: 700;
 }
 nav button.answered mat-icon {
-  color: #498975;
+  color: var(--accent);
 }
 .number {
   display: grid;
@@ -71,7 +71,7 @@ nav button.answered mat-icon {
   width: 23px;
   height: 23px;
   border-radius: 7px;
-  background: #f1f5f1;
+  background: var(--soft);
   font-size: 11px;
   flex-shrink: 0;
 }
@@ -80,8 +80,8 @@ nav button.answered mat-icon {
   align-items: center;
   gap: 8px;
   font-size: 11px;
-  color: #588571;
-  border-top: 1px solid #e9efea;
+  color: var(--accent);
+  border-top: 1px solid var(--line);
   padding: 20px 4px 0;
   margin-top: 20px;
 }
@@ -97,13 +97,13 @@ nav button.answered mat-icon {
 .save-error {
   font-size: 12px;
   margin-top: 12px;
-  color: #a04c33;
+  color: var(--mat-sys-error);
 }
 .workspace {
   min-width: 0;
   padding: 35px;
-  background: white;
-  border: 1px solid #dce7e3;
+  background: var(--panel);
+  border: 1px solid var(--line);
   border-radius: 20px;
   min-height: 430px;
 }
@@ -124,24 +124,20 @@ mat-radio-group {
 }
 mat-radio-button {
   display: block;
-  border: 1px solid #dce6df;
+  border: 1px solid var(--line);
   border-radius: 13px;
   padding: 11px 14px;
   font-size: 14px;
-  --mat-radio-label-text-color: #365348;
-  --mat-radio-selected-icon-color: #28856f;
-  --mat-radio-selected-focus-icon-color: #28856f;
-  --mat-radio-selected-hover-icon-color: #28856f;
 }
 mat-radio-button.chosen {
-  background: #edf6ef;
-  border-color: #72a68d;
+  background: var(--soft);
+  border-color: var(--accent);
 }
 .choice-letter {
   display: inline-flex;
   padding-right: 14px;
   font-size: 12px;
-  color: #7f9285;
+  color: var(--muted);
   font-weight: 700;
 }
 mat-radio-button span:last-child {
@@ -153,13 +149,13 @@ mat-radio-button span:last-child {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  border-top: 1px solid #e9eeea;
+  border-top: 1px solid var(--line);
   padding-top: 25px;
   margin-top: 35px;
 }
 .workspace-footer > span {
   font-size: 12px;
-  color: #73877c;
+  color: var(--muted);
 }
 .review-list {
   display: grid;
@@ -171,7 +167,7 @@ mat-radio-button span:last-child {
   text-align: left;
   background: none;
   border: 0;
-  border-bottom: 1px solid #edf1ed;
+  border-bottom: 1px solid var(--line);
   padding: 20px 0;
   color: inherit;
 }
@@ -188,21 +184,21 @@ mat-radio-button span:last-child {
 }
 .review-row span span {
   font-size: 13px;
-  color: #6a8273;
+  color: var(--muted);
 }
 .review-row span .unanswered {
-  color: #b17229;
+  color: var(--mat-sys-error);
 }
 .review-row mat-icon {
   font-size: 18px;
 }
 .notice,
 .error {
-  background: #fff2e4;
+  background: var(--error-soft);
   padding: 16px;
   border-radius: 12px;
   font-size: 13px;
-  color: #966231;
+  color: var(--on-error-soft);
   margin: 20px 0;
 }
 .error p {

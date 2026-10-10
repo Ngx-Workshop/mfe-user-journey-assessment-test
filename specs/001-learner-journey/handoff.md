@@ -27,3 +27,6 @@ Build the learner to `dist/learner-verification`, then run `npm run preview:lear
 
 ## Context
 Architecture/development now describe implemented behavior and actual evidence. Historical readiness reviews remain baseline snapshots. No deployment, registry publication, commit or push was performed.
+
+## Selected Material theme follow-up
+All learner surfaces, foregrounds, borders, badges, subject marks, progress and the hero illustration inherit Material system tokens from the shell. Removed fixed Material button/radio overrides and preserved the user’s removal of the journey background. Standalone body uses Material surface/on-surface tokens. Verified built output with temporary blue-palette light/dark fixtures: light card/text rgb(255,255,255)/rgb(27,27,31); dark card/text rgb(14,14,17)/rgb(229,225,230). Dark historical result and runner rendering checked. Production build and 8 tests pass; nonfatal inherited style warnings remain (4.52–6.48 kB). Actual hosted shell theme switching still requires the new remote release. Backend unchanged by this follow-up.

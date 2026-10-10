@@ -11,5 +11,7 @@ Learners need to discover subjects, enter eligible assessments, save progress, s
 - FR-004 / AC-004: Show dated historical results, score percentages and subject proficiency derived from the highest passed level, separately from levels completed. Empty, loading and retryable error states are explicit.
 - FR-005 / AC-005: Preserve authenticated ownership including legacy uuid-only records; deny other users and unauthenticated requests. Responsive layouts and keyboard-operable choices/navigation.
 
+- FR-006 / AC-006: Every learner surface, text, border, status and illustration uses the selected Material system theme, including light/dark mode. The federated remote inherits shell tokens; Material controls retain their theme defaults.
+
 ## Decisions and compatibility
 Retain existing completion-based progression (next level = completed count + 1), perfect-score passing, and no retries. No invented beginner/expert certification. Canonical userId and legacy uuid fallback follow reliable-authoring policy, without bulk migration. Preserve federation name, default App, named Routes and overview mount. New learner endpoints use existing authentication and browser /api/assessment-test gateway prefix. Production deployment is outside local implementation; host smoke testing is attempted separately.

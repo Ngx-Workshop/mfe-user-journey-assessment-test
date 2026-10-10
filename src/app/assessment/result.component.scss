@@ -5,8 +5,8 @@
   gap: 50px;
   align-items: center;
   padding: 38px;
-  border: 1px solid #d5e5d8;
-  background: #edf5ed;
+  border: 1px solid var(--line);
+  background: var(--soft);
   border-radius: 22px;
 }
 .result-hero h2 {
@@ -19,12 +19,12 @@
 }
 .result-hero .badge {
   margin-top: 18px;
-  background: #fff5df;
-  color: #8a6930;
+  background: var(--tertiary-soft);
+  color: var(--on-tertiary-soft);
 }
 .result-hero .badge.success {
-  background: #d7eddf;
-  color: #286c4c;
+  background: var(--primary-soft);
+  color: var(--on-primary-soft);
 }
 .result-details {
   display: grid;
@@ -33,18 +33,18 @@
   font-size: 13px;
 }
 .result-details span {
-  color: #7b8c7f;
+  color: var(--muted);
   font-size: 11px;
 }
 .score-ring {
   width: 200px;
   height: 200px;
-  background: conic-gradient(#3d8970 var(--score-angle), #d5e5d8 0);
+  background: conic-gradient(var(--accent) var(--score-angle), var(--line) 0);
   border-radius: 50%;
   padding: 10px;
 }
 .score-ring > div {
-  background: #edf5ed;
+  background: var(--soft);
   border-radius: 50%;
   width: 100%;
   height: 100%;
@@ -64,7 +64,7 @@
 }
 .score-ring span {
   font-size: 12px;
-  color: #617d6b;
+  color: var(--muted);
 }
 .result-actions {
   display: flex;
@@ -76,7 +76,7 @@
 .result-actions > span {
   width: 100%;
   font-size: 11px;
-  color: #7a8c7e;
+  color: var(--muted);
   margin-top: 4px;
 }
 .feedback-list {
@@ -85,12 +85,12 @@
 }
 .feedback {
   padding: 27px;
-  border: 1px solid #e8decc;
+  border: 1px solid var(--line);
   border-radius: 18px;
-  background: white;
+  background: var(--panel);
 }
 .feedback.correct {
-  border-color: #d6e6d9;
+  border-color: var(--line);
 }
 .feedback-heading {
   display: flex;
@@ -105,10 +105,10 @@
   gap: 6px;
   align-items: center;
   font-size: 11px;
-  color: #ae803b;
+  color: var(--mat-sys-error);
 }
 .correct .feedback-status {
-  color: #3f8a68;
+  color: var(--accent);
 }
 .feedback-status mat-icon {
   font-size: 16px;
@@ -131,17 +131,17 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #809080;
+  color: var(--muted);
 }
 .answer-grid p {
   margin: 9px 0;
   font-size: 13px;
-  color: #385741;
+  color: var(--ink);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 .feedback-note {
-  background: #f4f7f0;
+  background: var(--soft);
   border-radius: 12px;
   display: flex;
   gap: 12px;
@@ -150,7 +150,7 @@
   padding: 17px;
 }
 .feedback-note mat-icon {
-  color: #829a77;
+  color: var(--accent);
   font-size: 18px;
   height: 18px;
   width: 18px;

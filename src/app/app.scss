@@ -2,21 +2,28 @@
   display: block;
   min-width: 0;
   width: 100%;
-  color: #193a34;
-  --ink: #193a34;
-  --muted: #6d8176;
-  --mat-button-filled-container-color: #276e5b;
-  --mat-button-filled-label-text-color: white;
-  --mat-button-outlined-label-text-color: #276e5b;
-  --mat-button-text-label-text-color: #276e5b;
-  --mat-progress-bar-active-indicator-color: #438776;
+  color: var(--ink);
+  // Inherit the shell's palette and color scheme; never install a remote theme.
+  --ink: var(--mat-sys-on-surface);
+  --muted: var(--mat-sys-on-surface-variant);
+  --panel: var(--mat-sys-surface-container-lowest);
+  --soft: var(--mat-sys-surface-container);
+  --line: var(--mat-sys-outline-variant);
+  --accent: var(--mat-sys-primary);
+  --primary-soft: var(--mat-sys-primary-container);
+  --on-primary-soft: var(--mat-sys-on-primary-container);
+  --secondary-soft: var(--mat-sys-secondary-container);
+  --on-secondary-soft: var(--mat-sys-on-secondary-container);
+  --tertiary-soft: var(--mat-sys-tertiary-container);
+  --on-tertiary-soft: var(--mat-sys-on-tertiary-container);
+  --error-soft: var(--mat-sys-error-container);
+  --on-error-soft: var(--mat-sys-on-error-container);
   font-family: 'Roboto', sans-serif;
 }
 * {
   box-sizing: border-box;
 }
 .journey {
-  background: #f8faf7;
   min-height: 100%;
 }
 button {
@@ -27,7 +34,7 @@ button:disabled {
   cursor: default;
 }
 button:focus-visible {
-  outline: 3px solid #217c68;
+  outline: 3px solid var(--accent);
   outline-offset: 4px;
 }
 .hero {
@@ -36,8 +43,8 @@ button:focus-visible {
   grid-template-columns: minmax(0, 1fr) 260px;
   gap: 35px;
   overflow: hidden;
-  background: #edf3e9;
-  border-bottom: 1px solid #e0e9dd;
+  background: var(--soft);
+  border-bottom: 1px solid var(--line);
 }
 .hero-kicker {
   display: flex;
@@ -46,12 +53,12 @@ button:focus-visible {
   font-size: 9px;
   font-weight: 750;
   letter-spacing: 2.5px;
-  color: #65836b;
+  color: var(--muted);
 }
 .hero-kicker > span {
   width: 6px;
   height: 6px;
-  background: #6ca07b;
+  background: var(--soft);
   border-radius: 50%;
 }
 h1 {
@@ -64,10 +71,10 @@ h1 {
 h1 em {
   font-family: Georgia, serif;
   font-weight: 400;
-  color: #68826a;
+  color: var(--accent);
 }
 .hero-copy p {
-  color: #6c806e;
+  color: var(--muted);
   font-size: 13px;
   line-height: 1.8;
   margin: 0;
@@ -76,7 +83,7 @@ h1 em {
   display: flex;
   gap: 25px;
   margin-top: 23px;
-  color: #69816b;
+  color: var(--muted);
   font-size: 10px;
 }
 .hero-tags span {
@@ -100,14 +107,14 @@ h1 em {
   border-radius: 50%;
 }
 .orb-one {
-  background: #dce8d8;
+  background: var(--primary-soft);
   width: 210px;
   height: 210px;
   right: 0;
   top: 32px;
 }
 .orb-two {
-  border: 1px solid #c7dbc7;
+  border: 1px solid var(--line);
   width: 235px;
   height: 235px;
   left: 0;
@@ -117,8 +124,8 @@ h1 em {
   position: relative;
   width: 156px;
   height: 187px;
-  background: #fffffff0;
-  box-shadow: 0 16px 28px #45614613;
+  background: var(--panel);
+  box-shadow: 0 16px 28px color-mix(in srgb, var(--mat-sys-shadow) 12%, transparent);
   border-radius: 15px;
   padding: 19px;
   transform: rotate(-9deg);
@@ -129,14 +136,14 @@ h1 em {
   display: grid;
   place-items: center;
   border-radius: 9px;
-  background: #eaf3e7;
-  color: #719269;
+  background: var(--primary-soft);
+  color: var(--on-primary-soft);
   margin-bottom: 13px;
 }
 .art-card > span {
   font-size: 6px;
   letter-spacing: 1px;
-  color: #7c8c77;
+  color: var(--muted);
 }
 .art-bars {
   display: flex;
@@ -147,7 +154,7 @@ h1 em {
 }
 .art-bars i {
   width: 18px;
-  background: #a5c0a0;
+  background: var(--primary-soft);
   border-radius: 4px 4px 0 0;
   height: 25%;
 }
@@ -156,20 +163,20 @@ h1 em {
 }
 .art-bars i:nth-child(3) {
   height: 58%;
-  background: #88ab84;
+  background: color-mix(in srgb, var(--accent) 40%, var(--primary-soft));
 }
 .art-bars i:nth-child(4) {
   height: 76%;
-  background: #749b74;
+  background: color-mix(in srgb, var(--accent) 70%, var(--primary-soft));
 }
 .art-bars i:nth-child(5) {
   height: 100%;
-  background: #507f5c;
+  background: var(--accent);
 }
 .art-line {
   height: 4px;
   border-radius: 4px;
-  background: #e4ebdf;
+  background: var(--soft);
   width: 100%;
   margin-top: 7px;
 }
@@ -184,14 +191,14 @@ h1 em {
   height: 44px;
   display: grid;
   place-items: center;
-  background: #7b9d71;
-  color: white;
-  border: 5px solid #edf3e9;
+  background: var(--accent);
+  color: var(--mat-sys-on-primary);
+  border: 5px solid var(--line);
   border-radius: 50%;
 }
 .spark {
   position: absolute;
-  color: #9ab48c;
+  color: var(--accent);
 }
 .spark-one {
   top: 10px;
@@ -209,8 +216,8 @@ h1 em {
   align-items: center;
   gap: 15px;
   padding: 0 clamp(22px, 5vw, 65px);
-  background: white;
-  border-bottom: 1px solid #e2e9df;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
 }
 .journey-nav > div {
   display: flex;
@@ -224,13 +231,13 @@ h1 em {
   border: 0;
   border-bottom: 3px solid transparent;
   background: none;
-  color: #859082;
+  color: var(--muted);
   font-size: 12px;
   white-space: nowrap;
 }
 .journey-nav button.active {
-  border-color: #4a8062;
-  color: #315b46;
+  border-color: var(--accent);
+  color: var(--accent);
   font-weight: 650;
 }
 .journey-nav mat-icon {
@@ -240,7 +247,7 @@ h1 em {
 }
 .journey-nav > span {
   font-size: 10px;
-  color: #81907e;
+  color: var(--muted);
   white-space: nowrap;
 }
 .journey-nav i {
@@ -264,15 +271,15 @@ main:focus {
 }
 .loading p {
   font-size: 13px;
-  color: #798a78;
+  color: var(--muted);
 }
 .error {
   display: flex;
   gap: 15px;
   padding: 20px;
   border-radius: 14px;
-  background: #fff0e5;
-  color: #935c35;
+  background: var(--error-soft);
+  color: var(--on-error-soft);
   margin-bottom: 22px;
   font-size: 13px;
 }
@@ -283,12 +290,12 @@ main:focus {
   padding: 40px 0;
 }
 footer {
-  border-top: 1px solid #e3eade;
+  border-top: 1px solid var(--line);
   margin: 0 clamp(22px, 5vw, 65px);
   padding: 22px 0;
   display: flex;
   justify-content: space-between;
-  color: #8c9a86;
+  color: var(--muted);
   font-size: 10px;
 }
 footer > span:last-child {
@@ -298,7 +305,7 @@ footer > span:last-child {
 .footer-dot {
   padding-left: 10px;
   font-size: 14px;
-  color: #82a170;
+  color: var(--accent);
 }
 @media (max-width: 900px) {
   .hero {

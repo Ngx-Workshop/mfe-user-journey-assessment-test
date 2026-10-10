@@ -19,21 +19,21 @@ export const subjectInfo: Record<
     mark: 'A',
     description:
       'Components, templates, and the building blocks of modern applications.',
-    color: '#dd3764',
+    color: 'var(--mat-sys-primary)',
   },
   NESTJS: {
     name: 'NestJS',
     mark: 'N',
     description:
       'APIs, dependency injection, and scalable server-side architecture.',
-    color: '#ee7657',
+    color: 'var(--mat-sys-secondary)',
   },
   RXJS: {
     name: 'RxJS',
     mark: 'Rx',
     description:
       'Streams, operators, and thinking in reactive patterns.',
-    color: '#a36de1',
+    color: 'var(--mat-sys-tertiary)',
   },
 };
 export function apiError(error: unknown): string {
