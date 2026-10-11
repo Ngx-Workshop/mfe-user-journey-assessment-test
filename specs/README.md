@@ -13,3 +13,7 @@ The [readiness review](../docs/assessment-readiness.md) is an earlier source sna
 Current architecture and implementation are described in [architecture](../docs/architecture.md).
 
 - [003 Document section subjects](003-document-section-subjects/spec.md) — Implemented; hosted integration pending.
+
+- [004 Workshop continuity](004-workshop-continuity/spec.md) — Implemented; hosted integration pending.
+
+- [005-multiple-tests-per-level](005-multiple-tests-per-level/spec.md) — Implemented; hosted integration pending.

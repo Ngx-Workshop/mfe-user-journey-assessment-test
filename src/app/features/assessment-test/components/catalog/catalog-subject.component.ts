@@ -34,8 +34,9 @@ import { subjectInfo, TestSelection } from '../../models/assessment.models';
       accuracy</span>
   </div>
   <p class="assessment-ui__explanation">
-    Start the next available level, or pick up where you left off.
-    Completing a level unlocks the next published level.
+    Choose any available test, or pick up where you left off.
+    Completing one test unlocks the next level. Other tests at unlocked
+    levels remain available.
   </p>
   <div class="assessment-catalog__test-list">
     @for (test of subject.tests; track test.id) {
@@ -56,7 +57,7 @@ import { subjectInfo, TestSelection } from '../../models/assessment.models';
             · Untimed · One answer per question
           </p>
           @if (test.status === 'locked') {
-            <small>Complete earlier levels first. Missing levels must be
+            <small>Complete one test at each earlier level first, or resume your active test. Missing levels must be
               published before you can continue.</small>
           }
         </div>

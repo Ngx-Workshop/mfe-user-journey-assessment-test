@@ -124,3 +124,20 @@ owners deploy the service, publish/adopt the reviewed contract and release both
 consumers together before enabling new subjects. Verify real Admin creation,
 section load/error states and learner start/resume/history through hosted gateways.
 No publication, deployment or production data changes were performed here.
+
+## Workshop continuity — 2026-10-11
+
+See [004 continuity](../specs/004-workshop-continuity/handoff.md). Workshop reader route is `/workshops/overview`, matching its executable Routes. Activities accept `returnTo` (validated to that reader route and workshop/page query keys) and `workshopName`. Assessments accept an exact `test` definition ID; labs accept an exact published `lab` ID. Activity navigation merges query context; return reloads the server catalog and restores the lesson. No automatic starts or altered completion policy. Host Router owns cross-remote navigation; no nested remotes.
+
+## Multiple tests per level — 2026-10-11
+
+The catalog displays each definition independently, including sibling tests at the
+same level. Starting a row sends its exact definition ID. The service makes all
+unattempted tests at unlocked levels available, locks new starts while a subject
+has an unfinished attempt and unlocks the next consecutive level after any one
+test is completed. Completing siblings does not skip levels. Catalog copy now
+explains this policy. No DTO shape, federation or route changes were needed.
+See [005 handoff](../specs/005-multiple-tests-per-level/handoff.md).
+
+### Automatic workshop return
+Workshop context now returns automatically on confirmed assignment submission: assessment finish or a completed coding-lab submit response. Return uses the validated workshop/page destination with replaceUrl. Save-only, failures and historical loads keep their current views; ordinary result navigation remains for assignments without workshop context. Workshop return reloads authoritative progress. Learner copy explains the automatic return.

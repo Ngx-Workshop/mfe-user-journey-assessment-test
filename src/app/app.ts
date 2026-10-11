@@ -46,6 +46,12 @@ import { ResultComponent } from './features/assessment-test/pages/result/result.
   </nav>
   }
   <main #content tabindex="-1" [attr.aria-busy]="loading() || busy()">
+  @if (vm.returnTo()) {
+    <section class="assessment-journey__workshop" aria-label="Workshop activity">
+      <div><span>WORKSHOP ACTIVITY</span><strong>{{ vm.workshopName() }}</strong><p>Your place in the workshop is kept. After you submit, you’ll return to your workshop automatically.</p></div>
+      <button mat-stroked-button [disabled]="vm.busy() || view() === 'attempt'" (click)="vm.returnToWorkshop()"><mat-icon>arrow_back</mat-icon>Return to workshop</button>
+    </section>
+  }
     @if (view() === 'subject' || view() === 'result') {
     <button
       class="assessment-journey__back"
@@ -110,17 +116,20 @@ import { ResultComponent } from './features/assessment-test/pages/result/result.
       </button>
     </div>
     } @else {
+    @if (vm.missingTest() && view() === 'subject') {
+      <div class="assessment-journey__missing" role="status"><h2>Workshop assessment unavailable</h2><p>This assessment is no longer published for this subject. Return to your workshop to continue.</p></div>
+    } @else {
     <ngx-learner-catalog
       [subjects]="subjects()"
       [attempts]="attempts()"
-      [selected]="view() === 'subject' ? selected() : null"
+      [selected]="view() === 'subject' ? vm.focusedSubject() : null"
       [history]="view() === 'history'"
       [busy]="busy()"
       (openSubject)="openSubject($event)"
       (openTest)="openTest($event)"
       (openAttempt)="openAttempt($event)"
     />
-    } }
+    } } }
   </main>
   <footer>
     <span>Small steps. Lasting understanding.</span><span>NGX WORKSHOP <span class="assessment-journey__footer-dot">✦</span></span>
@@ -142,6 +151,11 @@ import { ResultComponent } from './features/assessment-test/pages/result/result.
     font-family: 'Roboto', sans-serif;
   }
 * { box-sizing: border-box; }
+.assessment-journey__workshop { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px; margin-bottom: 28px; border: 1px solid var(--line); border-radius: 16px; background: var(--primary-soft); color: var(--on-primary-soft); }
+.assessment-journey__workshop span { display: block; font-size: 10px; letter-spacing: 1.5px; margin-bottom: 8px; }
+.assessment-journey__workshop strong { display: block; overflow-wrap: anywhere; }
+.assessment-journey__workshop p { margin-bottom: 0; font-size: 13px; line-height: 1.5; }
+@media (max-width: 600px) { .assessment-journey__workshop { flex-direction: column; align-items: flex-start; } }
 .assessment-journey__journey { min-height: 100%; }
 button { font-family: inherit; cursor: pointer; }
 button:disabled { cursor: default; }

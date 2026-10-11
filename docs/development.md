@@ -56,3 +56,11 @@ Tests live in the matching `testing/app` tree, outside production source. See th
   preserves legacy branded metadata as a fallback.
 
 See [subject handoff](../specs/003-document-section-subjects/handoff.md).
+
+## Continuity verification — 2026-10-11
+
+22 ChromeHeadless tests and an isolated optimized build passed for this checkout. Synthetic desktop (1366px) and phone (390px) browser previews had no page errors or horizontal overflow. See [handoff](../specs/004-workshop-continuity/handoff.md) for evidence and the pending signed-in shell walkthrough. Use `/workshops/overview` for workshop returns; earlier `hello-world` workshop examples are outdated. Standalone lab providers now register exported Routes; cross-remote return paths still require host routing.
+
+## Multiple tests per level — 2026-10-11
+
+ChromeHeadless component/store suite and production build to /tmp/assessment-multi-test-learner-build passed. The new rendered-row test selects the second test at level 1 and verifies its definition ID in the POST. See [handoff](../specs/005-multiple-tests-per-level/handoff.md). No production deployment or data writes.

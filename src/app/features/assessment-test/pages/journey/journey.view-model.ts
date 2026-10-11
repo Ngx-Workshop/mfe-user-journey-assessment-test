@@ -2,6 +2,7 @@ import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { LearnerAttemptDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
+import { workshopReturn } from '../../utils/workshop-context';
 import { AssessmentStore } from '../../state/assessment.store';
 import { AssessmentView, Subject, TestSelection } from '../../models/assessment.models';
 
@@ -19,6 +20,14 @@ export class JourneyViewModel {
   readonly view = signal<AssessmentView>('overview');
   readonly subject = signal<string | null>(null);
   readonly attemptId = signal<string | null>(null);
+  readonly returnTo = signal<string | null>(null);
+  readonly workshopName = signal('Your workshops');
+  readonly testId = signal<string | null>(null);
+  readonly focusedSubject = computed(() => {
+    const subject = this.selected();
+    return subject && this.testId() ? { ...subject, tests: subject.tests.filter(t => t.id === this.testId()) } : subject;
+  });
+  readonly missingTest = computed(() => !!this.testId() && !!this.selected() && !this.focusedSubject()?.tests.length);
   readonly selected = computed(
     () =>
       this.subjects().find((s) => s.subject === this.subject()) ??
@@ -46,6 +55,9 @@ export class JourneyViewModel {
             ? view as AssessmentView
             : 'overview'
         );
+        this.returnTo.set(workshopReturn(params.get('returnTo')));
+        this.workshopName.set(params.get('workshopName') || 'Your workshops');
+        this.testId.set(params.get('test'));
         this.subject.set(params.get('subject'));
         this.attemptId.set(params.get('attempt'));
         this.store.clearError();
@@ -67,10 +79,17 @@ export class JourneyViewModel {
         view: view === 'overview' ? null : view,
         subject,
         attempt,
+        test: this.testId(),
       },
+      queryParamsHandling: 'merge',
     });
   }
+  returnToWorkshop() {
+    const url = this.returnTo();
+    if (url && !this.busy() && this.view() !== 'attempt') void this.router.navigateByUrl(url);
+  }
   openSubject(subject: Subject) {
+    this.testId.set(null);
     this.navigate('subject', subject);
   }
   openAttempt(attempt: LearnerAttemptDto) {
@@ -94,6 +113,11 @@ export class JourneyViewModel {
   }
 
   finish(id: string) {
+    const workshop = this.returnTo();
+    if (workshop) {
+      void this.router.navigateByUrl(workshop, { replaceUrl: true });
+      return;
+    }
     this.navigate('result', this.subject(), id);
     this.load();
   }

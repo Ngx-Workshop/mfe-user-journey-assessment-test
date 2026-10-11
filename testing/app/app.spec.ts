@@ -55,8 +55,9 @@ describe('Learner journey', () => {
   let router: jasmine.SpyObj<Router>;
   beforeEach(() => {
     params = new BehaviorSubject(convertToParamMap({}));
-    router = jasmine.createSpyObj('Router', ['navigate']);
+    router = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     router.navigate.and.resolveTo(true);
+    router.navigateByUrl.and.resolveTo(true);
     TestBed.configureTestingModule({
       imports: [App],
       providers: [
@@ -83,6 +84,23 @@ describe('Learner journey', () => {
     fixture.detectChanges();
     return fixture;
   }
+  it('starts the chosen test when several tests share a level', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const subject = { ...subjects[0], tests: [subjects[0].tests[0],
+      { ...subjects[0].tests[0], id: 'definition-2', name: 'Angular components' }] };
+    http.expectOne('/api/assessment-test/learner/catalog').flush([subject]);
+    http.expectOne('/api/assessment-test/learner/history').flush([]);
+    params.next(convertToParamMap({ view: 'subject', subject: 'ANGULAR' }));
+    fixture.detectChanges();
+    const rows = fixture.nativeElement.querySelectorAll('.assessment-catalog__test-row');
+    expect(rows.length).toBe(2);
+    expect(rows[1].textContent).toContain('Angular components');
+    rows[1].querySelector('button').click();
+    const request = http.expectOne('/api/assessment-test/start-test');
+    expect(request.request.body).toEqual({ subject: 'ANGULAR', assessmentTestId: 'definition-2' });
+    request.flush({ message: 'Changed selection' }, { status: 409, statusText: 'Conflict' });
+  });
   it('renders subject cards and eligible tests without authoring controls', () => {
     const fixture = loaded();
     const element = fixture.nativeElement as HTMLElement;
@@ -117,6 +135,7 @@ describe('Learner journey', () => {
           view: 'attempt',
           subject: 'ANGULAR',
           attempt: 'attempt-1',
+          test: null,
         },
       })
     );
@@ -193,4 +212,39 @@ describe('Learner journey', () => {
       fixture.nativeElement.querySelector('ngx-assessment-runner')
     ).toBeNull();
   });
+  it('focuses the exact workshop assessment and preserves context when starting', () => {
+    const fixture = loaded();
+    params.next(convertToParamMap({ view: 'subject', subject: 'ANGULAR', test: 'definition-1', returnTo: '/workshops/overview?workshop=w1&page=p1', workshopName: 'Components' }));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Return to workshop');
+    expect(fixture.nativeElement.querySelectorAll('.assessment-catalog__test-row').length).toBe(1);
+    fixture.componentInstance.openTest({ subject: 'ANGULAR', test: subjects[0].tests[0] as import('@tmdjr/service-nestjs-assessment-test-contracts').LearnerTestDto });
+    const start = http.expectOne('/api/assessment-test/start-test');
+    expect(start.request.body.assessmentTestId).toBe('definition-1');
+    start.flush({}, { status: 409, statusText: 'Conflict' });
+    fixture.componentInstance.navigate('history');
+    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParamsHandling: 'merge' }));
+    params.next(convertToParamMap({ view: 'subject', subject: 'ANGULAR', test: 'missing' })); fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Workshop assessment unavailable');
+    expect(fixture.nativeElement.querySelector('ngx-learner-catalog')).toBeNull();
+  });
+
+  it('automatically returns confirmed assessment completion to its workshop instead of opening results', () => {
+    const fixture = loaded();
+    params.next(convertToParamMap({ view: 'attempt', attempt: 'owned-attempt', subject: 'ANGULAR', returnTo: '/workshops/overview?workshop=w1&page=p1' }));
+    fixture.componentInstance.finish('owned-attempt');
+    expect(router.navigateByUrl).toHaveBeenCalledOnceWith('/workshops/overview?workshop=w1&page=p1', { replaceUrl: true });
+    expect(router.navigate).not.toHaveBeenCalled();
+    http.expectNone('/api/assessment-test/learner/catalog');
+  });
+  for (const returnTo of [undefined, 'https://example.com']) it(`keeps normal assessment result navigation without valid workshop context (${returnTo})`, () => {
+    const fixture = loaded();
+    params.next(convertToParamMap({ view: 'attempt', attempt: 'owned-attempt', subject: 'ANGULAR', ...(returnTo ? { returnTo } : {}) }));
+    fixture.componentInstance.finish('owned-attempt');
+    expect(router.navigateByUrl).not.toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: jasmine.objectContaining({ view: 'result', attempt: 'owned-attempt' }) }));
+    http.expectOne('/api/assessment-test/learner/catalog').flush(subjects);
+    http.expectOne('/api/assessment-test/learner/history').flush([]);
+  });
+
 });
