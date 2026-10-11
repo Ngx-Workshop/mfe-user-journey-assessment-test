@@ -26,7 +26,7 @@ import { ResultComponent } from './features/assessment-test/pages/result/result.
   imports: [MatButtonModule, MatIconModule, MatProgressBarModule, JourneyHeroComponent, CatalogComponent, RunnerComponent, ResultComponent],
   template: `
 <div class="assessment-journey__journey">
-  @if (view() !== 'attempt') {
+  @if (view() !== 'attempt' && !vm.directLaunch()) {
   <ngx-journey-hero />
   <nav class="assessment-journey__journey-nav" aria-label="Assessment views">
     <div>
@@ -60,7 +60,7 @@ import { ResultComponent } from './features/assessment-test/pages/result/result.
       <mat-icon>arrow_back</mat-icon>{{ view() === 'result' ? 'Back to
       history' : 'All subjects' }}
     </button>
-    } @if (loading()) {
+    } @if (loading() || vm.openingAssignment()) {
     <div class="assessment-journey__loading" role="status">
       <mat-progress-bar
         mode="indeterminate"
@@ -79,7 +79,7 @@ import { ResultComponent } from './features/assessment-test/pages/result/result.
         </button>
       </div>
     </div>
-    } @if (!loading() && subjects().length) { @if (view() ===
+    } @if (!loading() && !vm.openingAssignment() && subjects().length) { @if (view() ===
     'attempt') { @if (active(); as attempt) { @for (item of [attempt];
     track item._id) { @if (item.completed) {
     <ngx-assessment-result

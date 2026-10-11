@@ -136,6 +136,7 @@ describe('Learner journey', () => {
           subject: 'ANGULAR',
           attempt: 'attempt-1',
           test: null,
+          launch: null,
         },
       })
     );
@@ -245,6 +246,48 @@ describe('Learner journey', () => {
     expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: jasmine.objectContaining({ view: 'result', attempt: 'owned-attempt' }) }));
     http.expectOne('/api/assessment-test/learner/catalog').flush(subjects);
     http.expectOne('/api/assessment-test/learner/history').flush([]);
+  });
+
+  it('opens the exact workshop test directly once and preserves return context', () => {
+    params.next(convertToParamMap({ view: 'subject', subject: 'ANGULAR', test: 'definition-1', launch: 'direct', returnTo: '/workshops/overview?workshop=w1&page=p1' }));
+    const fixture = loaded();
+    const start = http.expectOne('/api/assessment-test/start-test');
+    expect(start.request.body).toEqual({ subject: 'ANGULAR', assessmentTestId: 'definition-1' });
+    fixture.detectChanges(); http.expectNone('/api/assessment-test/start-test');
+    start.flush({ _id: 'attempt-1', subject: 'ANGULAR', completed: false, lastUpdated: new Date().toISOString() });
+    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ replaceUrl: true, queryParamsHandling: 'merge', queryParams: jasmine.objectContaining({ view: 'attempt', attempt: 'attempt-1', launch: null }) }));
+    http.expectOne('/api/assessment-test/learner/catalog').flush(subjects);
+    http.expectOne('/api/assessment-test/learner/history').flush([]);
+    fixture.detectChanges(); http.expectNone('/api/assessment-test/start-test');
+  });
+  for (const status of ['in-progress', 'completed']) it(`opens an existing ${status} workshop test without starting another attempt`, () => {
+    params.next(convertToParamMap({ view: 'subject', subject: 'ANGULAR', test: 'definition-1', launch: 'direct' }));
+    const fixture = TestBed.createComponent(App); fixture.detectChanges();
+    http.expectOne('/api/assessment-test/learner/catalog').flush([{ ...subjects[0], tests: [{ ...subjects[0].tests[0], status, attemptId: 'existing' }] }]);
+    http.expectOne('/api/assessment-test/learner/history').flush([]); fixture.detectChanges();
+    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: jasmine.objectContaining({ view: status === 'completed' ? 'result' : 'attempt', attempt: 'existing', launch: null }) }));
+    http.expectNone('/api/assessment-test/start-test');
+  });
+  it('does not launch unavailable or locked workshop tests', () => {
+    const fixture = loaded();
+    params.next(convertToParamMap({ view: 'subject', subject: 'ANGULAR', test: 'missing', launch: 'direct' })); fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Workshop assessment unavailable');
+    params.next(convertToParamMap({ view: 'subject', subject: 'ANGULAR', test: 'definition-1', launch: 'direct' }));
+    fixture.componentInstance.load();
+    http.expectOne('/api/assessment-test/learner/catalog').flush([{ ...subjects[0], tests: [{ ...subjects[0].tests[0], status: 'locked' }] }]);
+    http.expectOne('/api/assessment-test/learner/history').flush([]); fixture.detectChanges();
+    http.expectNone('/api/assessment-test/start-test');
+  });
+  it('retains a failed direct test launch and retries only on explicit refresh', () => {
+    params.next(convertToParamMap({ view: 'subject', subject: 'ANGULAR', test: 'definition-1', launch: 'direct' }));
+    const fixture = loaded();
+    http.expectOne('/api/assessment-test/start-test').flush({}, { status: 503, statusText: 'Offline' });
+    fixture.detectChanges(); fixture.detectChanges(); http.expectNone('/api/assessment-test/start-test');
+    expect(fixture.nativeElement.querySelector('[role=alert]')).toBeTruthy();
+    fixture.componentInstance.load();
+    http.expectOne('/api/assessment-test/learner/catalog').flush(subjects);
+    http.expectOne('/api/assessment-test/learner/history').flush([]); fixture.detectChanges();
+    http.expectOne('/api/assessment-test/start-test').flush({}, { status: 503, statusText: 'Offline' });
   });
 
 });

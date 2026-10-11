@@ -1,4 +1,4 @@
-import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
+import { DestroyRef, Injectable, computed, effect, inject, signal, untracked } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { LearnerAttemptDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
@@ -12,6 +12,9 @@ export class JourneyViewModel {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly destroy = inject(DestroyRef);
+  private handledLaunch: string | null = null;
+  readonly directLaunch = signal(false);
+  readonly openingAssignment = computed(() => this.directLaunch() && this.busy());
   readonly subjects = this.store.subjects;
   readonly attempts = this.store.attempts;
   readonly loading = this.store.loading;
@@ -55,6 +58,8 @@ export class JourneyViewModel {
             ? view as AssessmentView
             : 'overview'
         );
+        this.directLaunch.set(params.get('launch') === 'direct' && !params.get('attempt'));
+        if (!this.directLaunch()) this.handledLaunch = null;
         this.returnTo.set(workshopReturn(params.get('returnTo')));
         this.workshopName.set(params.get('workshopName') || 'Your workshops');
         this.testId.set(params.get('test'));
@@ -65,9 +70,19 @@ export class JourneyViewModel {
     this.store.started$.pipe(takeUntilDestroyed(this.destroy)).subscribe(({ id, subject }) => {
       this.navigate('attempt', subject, id);
     });
+    effect(() => {
+      if (!this.directLaunch() || this.loading() || this.busy() || this.error()) return;
+      const subject = this.selected();
+      const test = subject?.tests.find(t => t.id === this.testId());
+      if (!subject || !test || test.status === 'locked') return;
+      const key = JSON.stringify([subject.subject, test.id, this.returnTo()]);
+      if (this.handledLaunch === key) return;
+      this.handledLaunch = key;
+      untracked(() => this.openTest({ subject: subject.subject, test }));
+    });
     this.load();
   }
-  load() { this.store.refresh(); }
+  load() { this.handledLaunch = null; this.store.refresh(); }
   navigate(
     view: AssessmentView,
     subject: string | null = null,
@@ -80,8 +95,10 @@ export class JourneyViewModel {
         subject,
         attempt,
         test: this.testId(),
+        launch: null,
       },
       queryParamsHandling: 'merge',
+      replaceUrl: this.directLaunch(),
     });
   }
   returnToWorkshop() {
