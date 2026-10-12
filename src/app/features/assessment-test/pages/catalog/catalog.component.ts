@@ -1,9 +1,17 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
 import type {
   LearnerAttemptDto,
   LearnerSubjectDto,
 } from '@tmdjr/service-nestjs-assessment-test-contracts';
-import { Subject, TestSelection } from '../../models/assessment.models';
+import {
+  Subject,
+  TestSelection,
+} from '../../models/assessment.models';
 import { CatalogOverviewComponent } from '../../components/catalog/catalog-overview.component';
 import { CatalogActivityComponent } from '../../components/catalog/catalog-activity.component';
 import { CatalogSubjectComponent } from '../../components/catalog/catalog-subject.component';
@@ -12,15 +20,34 @@ import { CatalogHistoryComponent } from '../../components/catalog/catalog-histor
 @Component({
   selector: 'ngx-learner-catalog',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CatalogOverviewComponent, CatalogActivityComponent, CatalogSubjectComponent, CatalogHistoryComponent],
+  imports: [
+    CatalogOverviewComponent,
+    CatalogActivityComponent,
+    CatalogSubjectComponent,
+    CatalogHistoryComponent,
+  ],
   template: `
     @if (history()) {
-      <ngx-catalog-history [subjects]="subjects()" [attempts]="attempts()" (openAttempt)="openAttempt.emit($event)" />
+      <ngx-catalog-history
+        [subjects]="subjects()"
+        [attempts]="attempts()"
+        (openAttempt)="openAttempt.emit($event)"
+      />
     } @else if (selected(); as subject) {
-      <ngx-catalog-subject [selected]="subject" [busy]="busy()" (openTest)="openTest.emit($event)" />
+      <ngx-catalog-subject
+        [selected]="subject"
+        [busy]="busy()"
+        (openTest)="openTest.emit($event)"
+      />
     } @else {
-      <ngx-catalog-overview [subjects]="subjects()" (openSubject)="openSubject.emit($event)" />
-      <ngx-catalog-activity [attempts]="attempts()" (openAttempt)="openAttempt.emit($event)" />
+      <ngx-catalog-overview
+        [subjects]="subjects()"
+        (openSubject)="openSubject.emit($event)"
+      />
+      <ngx-catalog-activity
+        [attempts]="attempts()"
+        (openAttempt)="openAttempt.emit($event)"
+      />
     }
   `,
   styles: [':host { display: block; min-width: 0; }'],

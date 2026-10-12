@@ -17,27 +17,45 @@ import { ResultFeedbackComponent } from '../../components/result/result-feedback
   selector: 'ngx-assessment-result',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ResultViewModel],
-  imports: [MatButtonModule, MatProgressBarModule, ResultSummaryComponent, ResultFeedbackComponent],
+  imports: [
+    MatButtonModule,
+    MatProgressBarModule,
+    ResultSummaryComponent,
+    ResultFeedbackComponent,
+  ],
   template: `
-@if (loading()) {
-  <mat-progress-bar
-    mode="indeterminate"
-    aria-label="Loading result"
-  />
-}
-@if (error()) {
-  <div class="assessment-ui__empty" role="alert">
-    <h3>We couldn’t load this result</h3>
-    <p>{{ error() }}</p>
-    <button mat-button (click)="load()">Try again</button><button mat-button (click)="back.emit()">Back to history</button>
-  </div>
-}
-@if (data(); as result) {
-  <ngx-result-summary [data]="result" [percentage]="percentage()" (back)="back.emit()" (nextSubject)="nextSubject.emit($event)" />
-  <ngx-result-feedback [data]="result" />
-}
+    @if (loading()) {
+      <mat-progress-bar
+        mode="indeterminate"
+        aria-label="Loading result"
+      />
+    }
+    @if (error()) {
+      <div class="assessment-ui__empty" role="alert">
+        <h3>We couldn’t load this result</h3>
+        <p>{{ error() }}</p>
+        <button mat-button (click)="load()">Try again</button
+        ><button mat-button (click)="back.emit()">
+          Back to history
+        </button>
+      </div>
+    }
+    @if (data(); as result) {
+      <ngx-result-summary
+        [data]="result"
+        [percentage]="percentage()"
+        (back)="back.emit()"
+        (nextSubject)="nextSubject.emit($event)"
+      />
+      <ngx-result-feedback [data]="result" />
+    }
   `,
-  styles: [`@use '../../styles/shared' as ui; @include ui.foundation(('empty',));`],
+  styles: [
+    `
+      @use '../../styles/shared' as ui;
+      @include ui.foundation(('empty'));
+    `,
+  ],
 })
 export class ResultComponent implements OnChanges {
   readonly vm = inject(ResultViewModel);
@@ -48,6 +66,10 @@ export class ResultComponent implements OnChanges {
   readonly loading = this.vm.loading;
   readonly error = this.vm.error;
   readonly percentage = this.vm.percentage;
-  ngOnChanges() { this.load(); }
-  load() { this.vm.load(this.id()); }
+  ngOnChanges() {
+    this.load();
+  }
+  load() {
+    this.vm.load(this.id());
+  }
 }

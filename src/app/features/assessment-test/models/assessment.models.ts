@@ -4,10 +4,12 @@ import type {
 } from '@tmdjr/service-nestjs-assessment-test-contracts';
 
 export type Subject = LearnerSubjectDto['subject'];
-const legacySubjectInfo: Partial<Record<
-  string,
-  { name: string; mark: string; description: string; color: string }
->> = {
+const legacySubjectInfo: Partial<
+  Record<
+    string,
+    { name: string; mark: string; description: string; color: string }
+  >
+> = {
   ANGULAR: {
     name: 'Angular',
     mark: 'A',
@@ -32,11 +34,18 @@ const legacySubjectInfo: Partial<Record<
 };
 
 /** Titles are display snapshots; the string subject ID remains the identity. */
-export function subjectInfo(subject: { subject: string; sectionTitle?: string }) {
+export function subjectInfo(subject: {
+  subject: string;
+  sectionTitle?: string;
+}) {
   const legacy = Object.hasOwn(legacySubjectInfo, subject.subject)
-    ? legacySubjectInfo[subject.subject] : undefined;
+    ? legacySubjectInfo[subject.subject]
+    : undefined;
   const title = subject.sectionTitle?.trim();
-  const name = title && title !== subject.subject ? title : legacy?.name ?? (title || subject.subject);
+  const name =
+    title && title !== subject.subject
+      ? title
+      : (legacy?.name ?? (title || subject.subject));
   return {
     name,
     mark: legacy?.mark ?? name.slice(0, 2),
@@ -45,5 +54,9 @@ export function subjectInfo(subject: { subject: string; sectionTitle?: string })
   };
 }
 
-export type AssessmentView = 'overview' | 'subject' | 'history' | 'attempt' | 'result';
-export interface TestSelection { subject: Subject; test: LearnerTestDto; }
+export type AssessmentView =
+  'overview' | 'subject' | 'history' | 'attempt' | 'result';
+export interface TestSelection {
+  subject: Subject;
+  test: LearnerTestDto;
+}

@@ -1,6 +1,20 @@
-import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
+import {
+  DestroyRef,
+  Injectable,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, Subject, catchError, defer, finalize, switchMap, tap } from 'rxjs';
+import {
+  EMPTY,
+  Subject,
+  catchError,
+  defer,
+  finalize,
+  switchMap,
+  tap,
+} from 'rxjs';
 import type { LearnerResultDto } from '@tmdjr/service-nestjs-assessment-test-contracts';
 import { AssessmentStore } from '../../state/assessment.store';
 import { apiError } from '../../utils/assessment-error';
@@ -14,19 +28,33 @@ export class ResultViewModel {
   readonly loading = signal(true);
   readonly percentage = computed(() => {
     const attempt = this.data()?.attempt;
-    return attempt?.questionCount ? Math.round(100 * attempt.score / attempt.questionCount) : 0;
+    return attempt?.questionCount
+      ? Math.round((100 * attempt.score) / attempt.questionCount)
+      : 0;
   });
   constructor() {
-    this.requests.pipe(switchMap(id => defer(() => {
-      this.data.set(null);
-      this.error.set('');
-      this.loading.set(true);
-      return this.store.result(id).pipe(
-        tap(data => this.data.set(data)),
-        catchError(error => { this.error.set(apiError(error)); return EMPTY; }),
-        finalize(() => this.loading.set(false)),
-      );
-    })), takeUntilDestroyed(inject(DestroyRef))).subscribe();
+    this.requests
+      .pipe(
+        switchMap((id) =>
+          defer(() => {
+            this.data.set(null);
+            this.error.set('');
+            this.loading.set(true);
+            return this.store.result(id).pipe(
+              tap((data) => this.data.set(data)),
+              catchError((error) => {
+                this.error.set(apiError(error));
+                return EMPTY;
+              }),
+              finalize(() => this.loading.set(false))
+            );
+          })
+        ),
+        takeUntilDestroyed(inject(DestroyRef))
+      )
+      .subscribe();
   }
-  load(id: string) { this.requests.next(id); }
+  load(id: string) {
+    this.requests.next(id);
+  }
 }

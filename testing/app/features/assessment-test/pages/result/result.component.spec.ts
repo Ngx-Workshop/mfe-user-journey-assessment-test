@@ -25,7 +25,8 @@ describe('Historical assessment result', () => {
       .expectOne('/api/assessment-test/attempts/history-id/result')
       .flush({
         attempt: {
-          subject: 'ANGULAR', sectionTitle: 'Angular',
+          subject: 'ANGULAR',
+          sectionTitle: 'Angular',
           level: 1,
           score: 1,
           questionCount: 2,
@@ -60,24 +61,35 @@ describe('Historical assessment result', () => {
   it('cancels stale results on input changes and retry, retaining no previous feedback', () => {
     TestBed.configureTestingModule({
       imports: [ResultComponent],
-      providers: [provideZonelessChangeDetection(), provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
     });
     const fixture = TestBed.createComponent(ResultComponent);
     const http = TestBed.inject(HttpTestingController);
     fixture.componentRef.setInput('id', 'first');
     fixture.detectChanges();
-    const first = http.expectOne('/api/assessment-test/attempts/first/result');
+    const first = http.expectOne(
+      '/api/assessment-test/attempts/first/result'
+    );
     fixture.componentRef.setInput('id', 'second');
     fixture.detectChanges();
     expect(first.cancelled).toBeTrue();
-    const second = http.expectOne('/api/assessment-test/attempts/second/result');
+    const second = http.expectOne(
+      '/api/assessment-test/attempts/second/result'
+    );
     fixture.componentInstance.load();
     expect(second.cancelled).toBeTrue();
-    http.expectOne('/api/assessment-test/attempts/second/result').flush({}, { status: 403, statusText: 'Forbidden' });
+    http
+      .expectOne('/api/assessment-test/attempts/second/result')
+      .flush({}, { status: 403, statusText: 'Forbidden' });
     fixture.detectChanges();
     expect(fixture.componentInstance.data()).toBeNull();
-    expect(fixture.nativeElement.textContent).toContain('does not have access');
+    expect(fixture.nativeElement.textContent).toContain(
+      'does not have access'
+    );
     http.verify();
   });
-
 });
