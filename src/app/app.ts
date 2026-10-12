@@ -39,7 +39,9 @@ import { ResultComponent } from './features/assessment-test/pages/result/result.
   template: `
     <div class="assessment-journey__journey">
       @if (view() !== 'attempt' && !vm.directLaunch()) {
-        <ngx-journey-hero />
+        @if (view() === 'overview') {
+          <ngx-journey-hero />
+        }
         <nav
           class="assessment-journey__journey-nav"
           aria-label="Assessment views"
