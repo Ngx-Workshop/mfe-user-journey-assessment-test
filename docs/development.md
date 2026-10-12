@@ -64,3 +64,7 @@ See [subject handoff](../specs/003-document-section-subjects/handoff.md).
 ## Multiple tests per level — 2026-10-11
 
 ChromeHeadless component/store suite and production build to /tmp/assessment-multi-test-learner-build passed. The new rendered-row test selects the second test at level 1 and verifies its definition ID in the POST. See [handoff](../specs/005-multiple-tests-per-level/handoff.md). No production deployment or data writes.
+
+## Angular route verification — 2026-10-11
+
+[006 routing](../specs/006-journey-routing/handoff.md) records 39 passing ChromeHeadless tests, source type/unused checks and an isolated production build. RouterTestingHarness tests use HTTP/Location doubles beneath /take-assessment-test. Location listener setup is explicit in TestBed; normal bootstrap installs it. Workshop suite has 14 passing tests plus architecture/types/build. No assessment architecture script is configured; review source boundaries alongside tests/build. Hosted sign-in/deep-link reload/workshop-return still need release verification.

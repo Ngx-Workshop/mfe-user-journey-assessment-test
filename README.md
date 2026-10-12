@@ -15,3 +15,5 @@ The generated contract package 0.0.19 is vendored until its registry release. Pr
 
 Implementation is grouped under `src/app/features/assessment-test`; test files
 mirror application folders under `testing/app`. See [testing](testing/README.md).
+
+Assessment navigation uses Angular routes beneath /take-assessment-test: overview (default), subjects/:subjectId, history, attempts/:attemptId, attempts/:attemptId/review and results/:attemptId. Existing overview query links migrate to canonical paths. Workshop links target the encoded subject path with an exact test ID and return context; the learner remote starts/resumes the owned attempt. See [routing handoff](specs/006-journey-routing/handoff.md).

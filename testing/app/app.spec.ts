@@ -8,9 +8,10 @@ import {
 import {
   ActivatedRoute,
   Router,
+  NavigationEnd,
   convertToParamMap,
 } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { App } from '../../src/app/app';
 
 const subjects = [
@@ -55,7 +56,7 @@ describe('Learner journey', () => {
   let router: jasmine.SpyObj<Router>;
   beforeEach(() => {
     params = new BehaviorSubject(convertToParamMap({}));
-    router = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
+    router = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl'], { events: params.pipe(map(() => new NavigationEnd(1, '/', '/'))) });
     router.navigate.and.resolveTo(true);
     router.navigateByUrl.and.resolveTo(true);
     TestBed.configureTestingModule({
@@ -66,7 +67,11 @@ describe('Learner journey', () => {
         provideHttpClientTesting(),
         {
           provide: ActivatedRoute,
-          useValue: { queryParamMap: params },
+          useValue: { get snapshot() { return {
+            queryParamMap: params.value,
+            paramMap: convertToParamMap({ subjectId: params.value.get('subject') ?? '', attemptId: params.value.get('attempt') ?? '' }),
+            data: { view: params.value.get('view') ?? 'overview' },
+          }; } },
         },
         { provide: Router, useValue: router },
       ],
@@ -129,14 +134,15 @@ describe('Learner journey', () => {
       lastUpdated: new Date().toISOString(),
     });
     expect(router.navigate).toHaveBeenCalledWith(
-      [],
+      ['attempts', 'attempt-1'],
       jasmine.objectContaining({
         queryParams: {
-          view: 'attempt',
-          subject: 'ANGULAR',
-          attempt: 'attempt-1',
+          view: null,
+          subject: null,
+          attempt: null,
           test: null,
           launch: null,
+          question: null,
         },
       })
     );
@@ -224,7 +230,7 @@ describe('Learner journey', () => {
     expect(start.request.body.assessmentTestId).toBe('definition-1');
     start.flush({}, { status: 409, statusText: 'Conflict' });
     fixture.componentInstance.navigate('history');
-    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParamsHandling: 'merge' }));
+    expect(router.navigate).toHaveBeenCalledWith(['history'], jasmine.objectContaining({ queryParamsHandling: 'merge' }));
     params.next(convertToParamMap({ view: 'subject', subject: 'ANGULAR', test: 'missing' })); fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Workshop assessment unavailable');
     expect(fixture.nativeElement.querySelector('ngx-learner-catalog')).toBeNull();
@@ -243,9 +249,8 @@ describe('Learner journey', () => {
     params.next(convertToParamMap({ view: 'attempt', attempt: 'owned-attempt', subject: 'ANGULAR', ...(returnTo ? { returnTo } : {}) }));
     fixture.componentInstance.finish('owned-attempt');
     expect(router.navigateByUrl).not.toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: jasmine.objectContaining({ view: 'result', attempt: 'owned-attempt' }) }));
-    http.expectOne('/api/assessment-test/learner/catalog').flush(subjects);
-    http.expectOne('/api/assessment-test/learner/history').flush([]);
+    expect(router.navigate).toHaveBeenCalledWith(['results', 'owned-attempt'], jasmine.objectContaining({ replaceUrl: true }));
+    http.expectNone('/api/assessment-test/learner/catalog');
   });
 
   it('opens the exact workshop test directly once and preserves return context', () => {
@@ -255,7 +260,7 @@ describe('Learner journey', () => {
     expect(start.request.body).toEqual({ subject: 'ANGULAR', assessmentTestId: 'definition-1' });
     fixture.detectChanges(); http.expectNone('/api/assessment-test/start-test');
     start.flush({ _id: 'attempt-1', subject: 'ANGULAR', completed: false, lastUpdated: new Date().toISOString() });
-    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ replaceUrl: true, queryParamsHandling: 'merge', queryParams: jasmine.objectContaining({ view: 'attempt', attempt: 'attempt-1', launch: null }) }));
+    expect(router.navigate).toHaveBeenCalledWith(['attempts', 'attempt-1'], jasmine.objectContaining({ replaceUrl: true, queryParamsHandling: 'merge', queryParams: jasmine.objectContaining({ view: null, attempt: null, launch: null }) }));
     http.expectOne('/api/assessment-test/learner/catalog').flush(subjects);
     http.expectOne('/api/assessment-test/learner/history').flush([]);
     fixture.detectChanges(); http.expectNone('/api/assessment-test/start-test');
@@ -265,7 +270,7 @@ describe('Learner journey', () => {
     const fixture = TestBed.createComponent(App); fixture.detectChanges();
     http.expectOne('/api/assessment-test/learner/catalog').flush([{ ...subjects[0], tests: [{ ...subjects[0].tests[0], status, attemptId: 'existing' }] }]);
     http.expectOne('/api/assessment-test/learner/history').flush([]); fixture.detectChanges();
-    expect(router.navigate).toHaveBeenCalledWith([], jasmine.objectContaining({ queryParams: jasmine.objectContaining({ view: status === 'completed' ? 'result' : 'attempt', attempt: 'existing', launch: null }) }));
+    expect(router.navigate).toHaveBeenCalledWith([status === 'completed' ? 'results' : 'attempts', 'existing'], jasmine.objectContaining({ queryParams: jasmine.objectContaining({ view: null, attempt: null, launch: null }) }));
     http.expectNone('/api/assessment-test/start-test');
   });
   it('does not launch unavailable or locked workshop tests', () => {

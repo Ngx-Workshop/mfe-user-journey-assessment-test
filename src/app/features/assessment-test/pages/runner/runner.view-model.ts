@@ -27,7 +27,7 @@ export class RunnerViewModel {
   private readonly store = inject(AssessmentStore);
   private readonly storage = inject(DraftStorage);
   private readonly destroy = inject(DestroyRef);
-  private readonly sessions = new Subject<LearnerAttemptDto>();
+  private readonly sessions = new Subject<{ attempt: LearnerAttemptDto; review: boolean; question: number | null }>();
   private readonly submissions = new Subject<void>();
   private readonly completions = new Subject<string>();
   readonly finished$ = this.completions.asObservable();
@@ -51,7 +51,7 @@ export class RunnerViewModel {
     !this.pending() && !this.saveError() && !this.submitting());
 
   constructor() {
-    this.sessions.pipe(switchMap(attempt => {
+    this.sessions.pipe(switchMap(({ attempt, review, question }) => {
       this.attempt = attempt;
       this.questions.set(null);
       this.answers.set([]);
@@ -71,7 +71,9 @@ export class RunnerViewModel {
           this.questions.set(data);
           this.answers.set(draft.answers);
           this.storageWarning.set(draft.warning);
-          this.go(Math.max(0, draft.answers.findIndex(answer => !answer)));
+          const index = question !== null && question < draft.answers.length ? question : Math.max(0, draft.answers.findIndex(answer => !answer));
+          this.go(index);
+          this.review.set(review);
           this.loading.set(false);
           if (draft.recovered) this.pending.set(1);
           const saves$ = draft.recovered
@@ -117,7 +119,8 @@ export class RunnerViewModel {
     window.addEventListener('beforeunload', beforeUnload);
     this.destroy.onDestroy(() => window.removeEventListener('beforeunload', beforeUnload));
   }
-  load(attempt: LearnerAttemptDto) { this.sessions.next(attempt); }
+  load(attempt: LearnerAttemptDto, review = false, question: number | null = null) { this.sessions.next({ attempt, review, question }); }
+  canLeave() { return !this.pending() && !this.saveError() && !this.submitting(); }
   save() {
     if (!this.attempt || !this.questions() || this.submitting()) return;
     this.pending.update(count => count + 1);

@@ -79,7 +79,7 @@ import { ResultComponent } from './features/assessment-test/pages/result/result.
         </button>
       </div>
     </div>
-    } @if (!loading() && !vm.openingAssignment() && subjects().length) { @if (view() ===
+    } @if (!loading() && !vm.openingAssignment()) { @if (view() ===
     'attempt') { @if (active(); as attempt) { @for (item of [attempt];
     track item._id) { @if (item.completed) {
     <ngx-assessment-result
@@ -89,7 +89,8 @@ import { ResultComponent } from './features/assessment-test/pages/result/result.
     />
     } @else {
     <ngx-assessment-runner
-      [attempt]="item"
+      [attempt]="item" [reviewMode]="vm.reviewMode()" [questionIndex]="vm.questionIndex()"
+      (reviewChange)="vm.review($event.review, $event.question)"
       (finished)="finish($event)"
       (exit)="exit()"
     />

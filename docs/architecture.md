@@ -10,7 +10,7 @@ reviews/submits attempts and displays historical results/proficiency.
 | --- | --- | --- |
 | Model/transport | `src/app/features/assessment-test/api/assessment-api.service.ts` | Stateless HttpClient requests using generated DTOs; no UI metadata, state or orchestration |
 | Shared state | `src/app/features/assessment-test/state/assessment.store.ts` | Root singleton catalog/history and loading/error state; superseded refresh cancellation, duplicate start guard, captured-ID ordered saves and completed-result submit reconciliation |
-| Journey VM | `src/app/features/assessment-test/pages/journey/journey.view-model.ts` | Scoped route query state, derived selection/active attempt, store commands and navigation |
+| Journey VM | `src/app/features/assessment-test/pages/journey/journey.view-model.ts` | Scoped route data/path state, derived selection/active attempt, store commands and navigation |
 | Runner VM | `src/app/features/assessment-test/pages/runner/runner.view-model.ts` | Scoped answer/form/review state, input session cancellation, persistence status, submission guard and teardown |
 | Result VM | `src/app/features/assessment-test/pages/result/result.view-model.ts` | Scoped result view/error state and latest-ID/retry loading |
 | Browser recovery | `src/app/features/assessment-test/state/draft-storage.service.ts` | Stateless browser draft adapter with owned question/choice validation, timestamp checks and optional-storage fallback |
@@ -62,9 +62,14 @@ concatMap serializes captured answer snapshots, and exhaustMap guards commands.
 
 ## Navigation and federation
 
-Keep default App, named Routes, `ngx-seed-mfe`, `./Component`, `./Routes`, overview
-route and query parameter navigation: `view=subject&subject=ANGULAR`,
-`view=attempt&attempt=<owned-id>`, `view=result&attempt=<owned-id>`, `view=history`.
+Keep default App, named Routes, `ngx-seed-mfe`, `./Component` and `./Routes`.
+Canonical routes are overview (default), subjects/:subjectId, history,
+attempts/:attemptId, attempts/:attemptId/review and results/:attemptId.
+Route data selects the view/review state; path parameters carry subject and attempt
+identity. Legacy overview query selectors redirect to canonical paths while
+preserving workshop context. Settled NavigationEnd snapshots are deduplicated.
+Standalone bootstrap renders JourneyRootComponent's RouterOutlet using the same
+exported Routes. App remains the federated journey component.
 The host provides Router and HttpClient with session interceptors. Standalone
 appConfig is not installed when the host loads the remote. Root styles establish
 theme aliases inherited by child components; no remote theme is installed in the
@@ -98,7 +103,7 @@ completed question counts. No retry, authorization or scoring rules changed.
 Same-origin `/api/assessment-test`: catalog/history, start-test, attempt questions,
 answers PATCH, submit-test and attempt result. Generated producer DTO archive
 0.0.20 remains in vendor until registry publication. Subjects are arbitrary section
-IDs with sectionTitle display snapshots. Federation and route URLs are preserved;
+IDs with sectionTitle display snapshots. Federation exports remain compatible; legacy route URLs redirect;
 no deployment or publication performed.
 
 ## Document section subjects — 2026-10-09
@@ -144,3 +149,9 @@ Workshop context now returns automatically on confirmed assignment submission: a
 
 ### Direct workshop assignment links
 Explicit resource links include `launch=direct`. After authoritative catalog/history loading, the scoped activity VM starts or resumes the exact eligible resource once, removes launch on internal navigation, and preserves returnTo/workshopName. Assessment completed references open saved results. Missing/locked resources and failed starts do not loop; explicit Refresh retries. This supersedes discovery-only entry for workshop assignment links. Ordinary discovery and placement remain available.
+
+## Route-driven assessment states — 2026-10-11
+
+See [006 routing](../specs/006-journey-routing/handoff.md). Owned history reconciles completed attempt links to results and unfinished results to the attempt route. Loading and errors stay on the requested route with existing retry actions. Attempts remain accessible when the subject catalog is empty; owned history/questions still gate the runner. Review initializes after owned questions load, restoring server answers or validated browser recovery. Returning from review carries question index as a query hint.
+
+JourneyNavigation is a root UI coordinator holding active scoped VM guard callbacks only. Destruction clears callbacks. Route deactivation and activation on reused route params block pending/failed answer saves and submissions. Confirmed start/completion explicitly approve their transition. Runner beforeunload remains in place. Answers/form state stay scoped, HTTP stays in AssessmentApi, server data orchestration stays in AssessmentStore. Host ./Component-only consumers must supply equivalent route data and subjectId/attemptId parameters; mounting ./Routes provides the canonical contract.

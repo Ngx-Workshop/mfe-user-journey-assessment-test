@@ -17,3 +17,5 @@ Current architecture and implementation are described in [architecture](../docs/
 - [004 Workshop continuity](004-workshop-continuity/spec.md) — Implemented; hosted integration pending.
 
 - [005-multiple-tests-per-level](005-multiple-tests-per-level/spec.md) — Implemented; hosted integration pending.
+
+- [006 Journey routing](006-journey-routing/spec.md) — Implemented; hosted integration pending.
