@@ -19,3 +19,5 @@ Current architecture and implementation are described in [architecture](../docs/
 - [005-multiple-tests-per-level](005-multiple-tests-per-level/spec.md) — Implemented; hosted integration pending.
 
 - [006 Journey routing](006-journey-routing/spec.md) — Implemented; hosted integration pending.
+
+- [007 Shared hero](007-shared-hero/spec.md) — Complete.

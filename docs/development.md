@@ -68,3 +68,14 @@ ChromeHeadless component/store suite and production build to /tmp/assessment-mul
 ## Angular route verification — 2026-10-11
 
 [006 routing](../specs/006-journey-routing/handoff.md) records 39 passing ChromeHeadless tests, source type/unused checks and an isolated production build. RouterTestingHarness tests use HTTP/Location doubles beneath /take-assessment-test. Location listener setup is explicit in TestBed; normal bootstrap installs it. Workshop suite has 14 passing tests plus architecture/types/build. No assessment architecture script is configured; review source boundaries alongside tests/build. Hosted sign-in/deep-link reload/workshop-return still need release verification.
+
+## Shared hero — 2026-10-12
+
+The remote consumes the checked-in `vendor/tmdjr-ngx-shared-headers-21.0.3.tgz`.
+Library changes require a new producer build/archive, dependency and lockfile update.
+Registry publication is separate release work. The focused test is
+`npm test -- --watch=false --browsers=ChromeHeadless --include='../testing/app/features/assessment-test/components/journey/journey-hero.component.spec.ts'`.
+The suite covers assessment-specific slot content and computed pause state across
+projected component styles. Full suite: 41 passing tests; production build and
+strict source type/unused checks also pass. No assessment architecture script exists;
+source boundaries were reviewed. See [007 handoff](../specs/007-shared-hero/handoff.md).

@@ -155,3 +155,14 @@ Explicit resource links include `launch=direct`. After authoritative catalog/his
 See [006 routing](../specs/006-journey-routing/handoff.md). Owned history reconciles completed attempt links to results and unfinished results to the attempt route. Loading and errors stay on the requested route with existing retry actions. Attempts remain accessible when the subject catalog is empty; owned history/questions still gate the runner. Review initializes after owned questions load, restoring server answers or validated browser recovery. Returning from review carries question index as a query hint.
 
 JourneyNavigation is a root UI coordinator holding active scoped VM guard callbacks only. Destruction clears callbacks. Route deactivation and activation on reused route params block pending/failed answer saves and submissions. Confirmed start/completion explicitly approve their transition. Runner beforeunload remains in place. Answers/form state stay scoped, HTTP stays in AssessmentApi, server data orchestration stays in AssessmentStore. Host ./Component-only consumers must supply equivalent route data and subjectId/attemptId parameters; mounting ./Routes provides the canonical contract.
+
+## Composable hero — 2026-10-12
+
+`JourneyHeroComponent` now composes `NgxHero` from @tmdjr/ngx-shared-headers
+21.0.3 with local `AssessmentHeroBackgroundComponent` (scanning grid) and
+`AssessmentHeroArtComponent` (assessment sheet). Layout owns typography, breakpoints
+and pause state; projected components own their visuals. Both use the inherited
+`--ngx-hero-animation-play-state` and honor reduced motion. Local copy and selector
+remain compatible. No HTTP/store/VM responsibilities were added. The dependency is
+a checked-in vendor archive, with no sibling-source alias or federation singleton.
+See [007 handoff](../specs/007-shared-hero/handoff.md).
