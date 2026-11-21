@@ -21,3 +21,5 @@ Current architecture and implementation are described in [architecture](../docs/
 - [006 Journey routing](006-journey-routing/spec.md) — Implemented; hosted integration pending.
 
 - [007 Shared hero](007-shared-hero/spec.md) — Complete.
+
+- [008-static-deployment-cleanup](008-static-deployment-cleanup/spec.md): Static deployment cleanup; helper verified, Actions rollout pending.
