@@ -22,4 +22,4 @@ Current architecture and implementation are described in [architecture](../docs/
 
 - [007 Shared hero](007-shared-hero/spec.md) — Complete.
 
-- [008-static-deployment-cleanup](008-static-deployment-cleanup/spec.md): Static deployment cleanup; helper verified, Actions rollout pending.
+- [008-static-deployment-cleanup](008-static-deployment-cleanup/spec.md): Static deployment cleanup; helper tests, Actions rollout and live Nginx entrypoints verified.
